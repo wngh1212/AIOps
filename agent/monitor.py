@@ -76,7 +76,7 @@ class MonitorAgent:
             return
 
         # 4. 장애 전파 (분석 결과 포함)
-        emoji = "🚨" if tier == 0 else "🔥"
+        emoji = "!!!" if tier == 0 else "!!!"
         detect_msg = (
             f"[{emoji} 장애 감지 & 분석] {name}\n"
             f"- 트리거: {trigger}\n"

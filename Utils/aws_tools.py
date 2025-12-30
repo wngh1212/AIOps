@@ -25,7 +25,6 @@ class AWSTools:
         [Universal Executor]
         LLM이 생성한 Python 코드를 샌드박스(제한적) 환경에서 실행하고 결과 출력값을 반환
         """
-        # 표준 출력 캡처 준비
         old_stdout = sys.stdout
         redirected_output = sys.stdout = StringIO()
 
@@ -108,5 +107,5 @@ class AWSTools:
 
     def get_recent_logs(self, instance_id, lines=50):
         # 더미 로그 혹은 CloudWatch Logs 연동
-        # 여기서는 단순 예시 텍스트 반환 (실제 구현 시 SSM이나 CW Logs 호출)
+        # 여기서는 단순 예시 텍스트 반환
         return f"[Mock Log] System logs for {instance_id}: No critical errors found."

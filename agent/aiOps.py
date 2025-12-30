@@ -21,29 +21,24 @@ class ChatOpsClient:
         return text.strip()
 
     def _auto_fix_code(self, code):
-        """
-        [Auto-Fix] LLM의 환각(Hallucination) 및 문법 오류 교정
-        """
         fixed = code
 
-        # 1. 불필요한 import 제거
         fixed = re.sub(r"^import boto3.*$", "", fixed, flags=re.MULTILINE)
 
-        # 2. 클라이언트 생성 차단 (이미 주입된 객체 사용 유도)
         # ec2 = boto3.client(...) -> ec2 = ec2
         fixed = re.sub(r"(\w+)\s*=\s*boto3\.client.*", r"\1 = \1", fixed)
 
-        # 3. [Critical] 'security-group' 서비스 환각 수정
+        # security-group 서비스 환각 수정
         # 모델이 boto3.client('security-group')을 시도하면 ec2로 변경
         if "client('security-group')" in fixed or 'client("security-group")' in fixed:
             fixed = fixed.replace("client('security-group')", "ec2")
             fixed = fixed.replace('client("security-group")', "ec2")
 
-        # 4. [Critical] VPC 파라미터 수정 (CidrIp -> CidrBlock)
+        #  VPC 파라미터 수정 (CidrIp -> CidrBlock)
         fixed = fixed.replace("CidrIp=", "CidrBlock=")
         fixed = fixed.replace("Cidr=", "CidrBlock=")
 
-        # 5. [Critical] Security Group - Description 강제 주입
+        # Security Group - Description 강제 주입
         # create_security_group 호출 시 Description이 없으면 추가
         if "create_security_group" in fixed and "Description" not in fixed:
             fixed = re.sub(
@@ -52,17 +47,15 @@ class ChatOpsClient:
                 fixed,
             )
 
-        # 6. [Critical] S3 Config 주입 (안전한 방식)
+        # S3 Config 주입
         # 괄호 짝을 깨지 않도록 create_bucket 함수 내부에만 주입
         if "create_bucket" in fixed and "CreateBucketConfiguration" not in fixed:
-            # Bucket='...' 뒤에 콤마와 설정을 추가
             fixed = re.sub(
                 r"(Bucket\s*=\s*['\"][^'\"]+['\"])",
                 r"\1, CreateBucketConfiguration={'LocationConstraint': 'ap-northeast-2'}",
                 fixed,
             )
 
-        # 7. S3 생성 시 불필요한 VpcId 파라미터 제거 (환각 방지)
         if "create_bucket" in fixed and "VpcId=" in fixed:
             fixed = re.sub(r",?\s*VpcId\s*=\s*[^,)]+", "", fixed)
 
@@ -71,13 +64,11 @@ class ChatOpsClient:
     def chat(self, user_input):
         input_lower = user_input.lower()
 
-        # 1. SOP 검색 모드
         if "sop" in input_lower or "guideline" in input_lower:
             print("[System] SOP Search")
             query = user_input.replace("SOP", "").replace("find", "").strip()
             return self.server.call_tool("search_sop", {"query": query})
 
-        # 2. Python 코딩 모드 (프롬프트 강화)
         prompt = f"""
         [ROLE]
         You are an AWS Python Automation Expert.
@@ -114,7 +105,6 @@ class ChatOpsClient:
         - Do not re-initialize clients.
         """
 
-        # LLM 호출
         raw = self.llm.invoke(prompt)
         clean = self._extract_python_code(raw)
         final = self._auto_fix_code(clean)
