@@ -9,7 +9,6 @@ from Utils.sop_manager import SOPManager
 
 class MCPServer:
     def __init__(self):
-        # 도구 및 데이터 초기화
         self.aws = AWSTools()
         self.sop_manager = SOPManager()
 
@@ -39,8 +38,8 @@ class MCPServer:
 
     def find_best_tool(self, user_query):
         """
-        사용자 질문과 가장 유사한 도구를 찾습니다.
-        복잡한 생성/제어 명령은 'execute_python_code'로 유도됩니다.
+        사용자 질문과 가장 유사한 도구를 검색
+        복잡한 생성/제어 명령은 execute_python_code로 유도
         """
         # 키워드 기반 매칭
         query_lower = user_query.lower()
@@ -64,7 +63,7 @@ class MCPServer:
             if "list" not in query_lower and "show" not in query_lower:
                 return "execute_python_code"
 
-        # 2. Vector Search
+        # Vector Search
         query_vec = self.model.encode([user_query])
         similarities = cosine_similarity(query_vec, self.tool_embeddings)[0]
         best_idx = similarities.argmax()
@@ -92,7 +91,6 @@ class MCPServer:
             if tool_name == "execute_python_code" and "code_str" in params:
                 return func(params["code_str"])
 
-            # 그 외 딕셔너리 언패킹 실행
             return func(**params)
 
         except Exception as e:

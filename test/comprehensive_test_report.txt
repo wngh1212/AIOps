@@ -1,7 +1,7 @@
-Test Report - 2025-12-30 15:16:56.898641
+Test Report - 2025-12-30 16:01:51.977257
 ============================================================
 Step: SOP Search
-Time: 0.11s
+Time: 0.13s
 Prompt: What to do if a server has high CPU usage? Find SOP.
 Response: # =================================================================
 # AWS AIOps Enterprise Standard Operating Procedures (SOP)
@@ -82,27 +82,30 @@ Response: # =================================================================
 - SAFETY_3: [SSM] All SSM commands must timeout after 60 seconds to prevent hanging agents.
 ----------------------------------------
 Step: Create VPC
-Time: 119.65s
+Time: 135.46s
 Prompt: Create a VPC with cidr 10.50.0.0/16. Print the vpc id.
 Response: [Result]
-❌ Code Execution Error: closing parenthesis ']' does not match opening parenthesis '(' (<string>, line 2)
+❌ Code Execution Error: invalid syntax (<string>, line 1)
 ----------------------------------------
 Step: Create Subnet
-Time: 274.37s
+Time: 123.33s
 Prompt: Create a subnet in 'None' with cidr 10.50.1.0/24. Print the subnet id.
 Response: [Result]
-❌ Code Execution Error: name 'vpc_cidr' is not defined
+
+[System] Executing Generated Code...
+
+subnet-06820847ccaaa1929
+
 ----------------------------------------
 Step: Create SG
-Time: 237.57s
+Time: 82.13s
 Prompt: Create a security group in 'None' named 'E2E-SG'. Print the group id.
 Response: [Result]
-❌ Code Execution Error: Unknown service: 'security-group'. Valid service names are: accessanalyzer, account, acm, acm-pca, aiops, amp, amplify, amplifybackend, amplifyuibuilder, apigateway, apigatewaymanagementapi, apigatewayv2, appconfig, appconfigdata, appfabric, appflow, appintegrations, application-autoscaling, application-insights, application-signals, applicationcostprofiler, appmesh, apprunner, appstream, appsync, arc-region-switch, arc-zonal-shift, artifact, athena, auditmanager, autoscaling, autoscaling-plans, b2bi, backup, backup-gateway, backupsearch, batch, bcm-dashboards, bcm-data-exports, bcm-pricing-calculator, bcm-recommended-actions, bedrock, bedrock-agent, bedrock-agent-runtime, bedrock-agentcore, bedrock-agentcore-control, bedrock-data-automation, bedrock-data-automation-runtime, bedrock-runtime, billing, billingconductor, braket, budgets, ce, chatbot, chime, chime-sdk-identity, chime-sdk-media-pipelines, chime-sdk-meetings, chime-sdk-messaging, chime-sdk-voice, cleanrooms, cleanroomsml, cloud9, cloudcontrol, clouddirectory, cloudformation, cloudfront, cloudfront-keyvaluestore, cloudhsm, cloudhsmv2, cloudsearch, cloudsearchdomain, cloudtrail, cloudtrail-data, cloudwatch, codeartifact, codebuild, codecatalyst, codecommit, codeconnections, codedeploy, codeguru-reviewer, codeguru-security, codeguruprofiler, codepipeline, codestar-connections, codestar-notifications, cognito-identity, cognito-idp, cognito-sync, comprehend, comprehendmedical, compute-optimizer, compute-optimizer-automation, config, connect, connect-contact-lens, connectcampaigns, connectcampaignsv2, connectcases, connectparticipant, controlcatalog, controltower, cost-optimization-hub, cur, customer-profiles, databrew, dataexchange, datapipeline, datasync, datazone, dax, deadline, detective, devicefarm, devops-guru, directconnect, discovery, dlm, dms, docdb, docdb-elastic, drs, ds, ds-data, dsql, dynamodb, dynamodbstreams, ebs, ec2, ec2-instance-connect, ecr, ecr-public, ecs, efs, eks, eks-auth, elasticache, elasticbeanstalk, elastictranscoder, elb, elbv2, emr, emr-containers, emr-serverless, entityresolution, es, events, evidently, evs, finspace, finspace-data, firehose, fis, fms, forecast, forecastquery, frauddetector, freetier, fsx, gamelift, gameliftstreams, geo-maps, geo-places, geo-routes, glacier, globalaccelerator, glue, grafana, greengrass, greengrassv2, groundstation, guardduty, health, healthlake, iam, identitystore, imagebuilder, importexport, inspector, inspector-scan, inspector2, internetmonitor, invoicing, iot, iot-data, iot-jobs-data, iot-managed-integrations, iotanalytics, iotdeviceadvisor, iotevents, iotevents-data, iotfleetwise, iotsecuretunneling, iotsitewise, iotthingsgraph, iottwinmaker, iotwireless, ivs, ivs-realtime, ivschat, kafka, kafkaconnect, kendra, kendra-ranking, keyspaces, keyspacesstreams, kinesis, kinesis-video-archived-media, kinesis-video-media, kinesis-video-signaling, kinesis-video-webrtc-storage, kinesisanalytics, kinesisanalyticsv2, kinesisvideo, kms, lakeformation, lambda, launch-wizard, lex-models, lex-runtime, lexv2-models, lexv2-runtime, license-manager, license-manager-linux-subscriptions, license-manager-user-subscriptions, lightsail, location, logs, lookoutequipment, m2, machinelearning, macie2, mailmanager, managedblockchain, managedblockchain-query, marketplace-agreement, marketplace-catalog, marketplace-deployment, marketplace-entitlement, marketplace-reporting, marketplacecommerceanalytics, mediaconnect, mediaconvert, medialive, mediapackage, mediapackage-vod, mediapackagev2, mediastore, mediastore-data, mediatailor, medical-imaging, memorydb, meteringmarketplace, mgh, mgn, migration-hub-refactor-spaces, migrationhub-config, migrationhuborchestrator, migrationhubstrategy, mpa, mq, mturk, mwaa, mwaa-serverless, neptune, neptune-graph, neptunedata, network-firewall, networkflowmonitor, networkmanager, networkmonitor, notifications, notificationscontacts, nova-act, oam, observabilityadmin, odb, omics, opensearch, opensearchserverless, organizations, osis, outposts, panorama, partnercentral-account, partnercentral-benefits, partnercentral-channel, partnercentral-selling, payment-cryptography, payment-cryptography-data, pca-connector-ad, pca-connector-scep, pcs, personalize, personalize-events, personalize-runtime, pi, pinpoint, pinpoint-email, pinpoint-sms-voice, pinpoint-sms-voice-v2, pipes, polly, pricing, proton, qapps, qbusiness, qconnect, quicksight, ram, rbin, rds, rds-data, redshift, redshift-data, redshift-serverless, rekognition, repostspace, resiliencehub, resource-explorer-2, resource-groups, resourcegroupstaggingapi, rolesanywhere, route53, route53-recovery-cluster, route53-recovery-control-config, route53-recovery-readiness, route53domains, route53globalresolver, route53profiles, route53resolver, rtbfabric, rum, s3, s3control, s3outposts, s3tables, s3vectors, sagemaker, sagemaker-a2i-runtime, sagemaker-edge, sagemaker-featurestore-runtime, sagemaker-geospatial, sagemaker-metrics, sagemaker-runtime, savingsplans, scheduler, schemas, sdb, secretsmanager, security-ir, securityhub, securitylake, serverlessrepo, service-quotas, servicecatalog, servicecatalog-appregistry, servicediscovery, ses, sesv2, shield, signer, signin, simspaceweaver, sms-voice, snow-device-management, snowball, sns, socialmessaging, sqs, ssm, ssm-contacts, ssm-guiconnect, ssm-incidents, ssm-quicksetup, ssm-sap, sso, sso-admin, sso-oidc, stepfunctions, storagegateway, sts, supplychain, support, support-app, swf, synthetics, taxsettings, textract, timestream-influxdb, timestream-query, timestream-write, tnb, transcribe, transfer, translate, trustedadvisor, verifiedpermissions, voice-id, vpc-lattice, waf, waf-regional, wafv2, wellarchitected, wickr, wisdom, workdocs, workmail, workmailmessageflow, workspaces, workspaces-instances, workspaces-thin-client, workspaces-web, xray
+❌ Code Execution Error: No module named 'ec2'
 ----------------------------------------
 Step: Create S3
-Time: 300.69s
-Prompt: Create an S3 bucket named 'e2e-test-e6bb83' in ap-northeast-2. Print 'Success'.
+Time: 358.07s
+Prompt: Create an S3 bucket named 'e2e-test-df6398' in ap-northeast-2. Print 'Success'.
 Response: [Result]
-❌ Code Execution Error: Parameter validation failed:
-Invalid type for parameter VpcId, value: {'Vpc': {'OwnerId': '956959051423', 'InstanceTenancy': 'default', 'Ipv6CidrBlockAssociationSet': [], 'CidrBlockAssociationSet': [{'AssociationId': 'vpc-cidr-assoc-027f669e7dd595c96', 'CidrBlock': '10.0.0.0/16', 'CidrBlockState': {'State': 'associated'}}], 'IsDefault': False, 'VpcId': 'vpc-0c207f10803335303', 'State': 'pending', 'CidrBlock': '10.0.0.0/16', 'DhcpOptionsId': 'dopt-0ed7ae87e62898d67'}, 'ResponseMetadata': {'RequestId': '6334577d-e390-4785-9dcc-7dc2e4e8cad7', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '6334577d-e390-4785-9dcc-7dc2e4e8cad7', 'cache-control': 'no-cache, no-store', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'content-type': 'text/xml;charset=UTF-8', 'content-length': '692', 'date': 'Tue, 30 Dec 2025 06:32:29 GMT', 'server': 'AmazonEC2'}, 'RetryAttempts': 0}}, type: <class 'dict'>, valid types: <class 'str'>
+❌ Code Execution Error: invalid syntax (<string>, line 5)
 ----------------------------------------
