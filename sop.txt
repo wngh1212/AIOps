@@ -1,0 +1,77 @@
+# =================================================================
+# AWS AIOps Enterprise Standard Operating Procedures (SOP)
+# =================================================================
+
+# 1. SYSTEM CLASSIFICATION & METADATA
+# -----------------------------------------------------------------
+# Role definitions based on instance tags for context-aware actions.
+- ROLE_WEB: Tag:Name contains "Web", "Frontend", "Nginx", "Apache", "Was"
+- ROLE_DB: Tag:Name contains "DB", "RDS", "Redis", "Mongo", "Elastic"
+- ROLE_BATCH: Tag:Name contains "Batch", "Job", "Worker", "Airflow"
+- ENV_PROD: Tag:Env contains "prod", "production", "live"
+- ENV_DEV: Tag:Env contains "dev", "test", "stage"
+
+# 2. INCIDENT RESPONSE RULES
+# -----------------------------------------------------------------
+
+[RULE_01: PROD_INSTANCE_DOWN]
+- SEVERITY: P1 (Critical)
+- CONDITION: (instance_state == 'stopped') AND (ENV_PROD is True)
+- ACTION_TYPE: EC2_START
+- COMMAND: null
+- REASON: Production server is down. Immediate restart required to recover SLA. Notify Ops team immediately.
+
+[RULE_02: DEV_INSTANCE_DOWN]
+- SEVERITY: P3 (Low)
+- CONDITION: (instance_state == 'stopped') AND (ENV_DEV is True)
+- ACTION_TYPE: EC2_START
+- COMMAND: null
+- REASON: Development server found stopped. Auto-starting for developer convenience.
+
+[RULE_03: MEMORY_OOM_KILLER_DETECTED]
+- SEVERITY: P2 (High)
+- CONDITION: logs contain "Out of memory" OR "Kill process" OR "Sacrificed child"
+- ACTION_TYPE: ADVISE_SCALE_UP
+- COMMAND: "dmesg | grep -i 'killed process' | tail -n 5"
+- REASON: OOM Killer invoked. System is unstable. Do NOT restart blindly. Check logs for specific process memory leaks. Recommend changing Instance Type (Scale-up).
+
+[RULE_04: WEB_SERVICE_Hang_OR_CRASH]
+- SEVERITY: P2 (High)
+- CONDITION: (ROLE_WEB is True) AND (logs contain "Connection refused" OR "502 Bad Gateway" OR "worker_connections are not enough")
+- ACTION_TYPE: SSM_RUN
+- COMMAND: "sudo nginx -t && sudo systemctl reload nginx || sudo systemctl restart nginx"
+- REASON: Web service unreachable. Performing syntax check (-t) first. If passed, trying graceful reload. If failed, force restart.
+
+[RULE_05: DISK_USAGE_CRITICAL_LOGS]
+- SEVERITY: P2 (High)
+- CONDITION: logs contain "No space left on device" OR "DiskFull"
+- ACTION_TYPE: SSM_RUN
+- COMMAND: "sudo journalctl --vacuum-time=2d && sudo find /var/log -name '*.gz' -mtime +30 -delete"
+- REASON: Disk full prevented service write. Safely vacuuming systemd journals and deleting archived logs older than 30 days.
+
+[RULE_06: HIGH_CPU_DIAGNOSIS]
+- SEVERITY: P3 (Warning)
+- CONDITION: cpu_usage > 90.0
+- ACTION_TYPE: SSM_RUN
+- COMMAND: "ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu | head -n 6"
+- REASON: High CPU (>90%) detected. Executing process snapshot to identify the culprit process before deciding on reboot.
+
+[RULE_07: ZOMBIE_PROCESS_STUCK]
+- SEVERITY: P2 (High)
+- CONDITION: logs contain "defunct" OR "zombie" OR "waiting for I/O"
+- ACTION_TYPE: REBOOT_INSTANCE
+- COMMAND: null
+- REASON: System has high load due to zombie processes or I/O wait. Soft reboot is the safest way to clear the process table.
+
+[RULE_08: SECURITY_BRUTE_FORCE]
+- SEVERITY: P1 (Critical)
+- CONDITION: logs contain "Invalid user" OR "Failed password" repeated > 10 times
+- ACTION_TYPE: ADVISE_SECURITY
+- COMMAND: "grep 'Failed password' /var/log/secure | awk '{print $(NF-3)}' | sort | uniq -c | sort -nr | head -5"
+- REASON: Brute-force attack pattern detected. Running analysis command to identify attacker IP. Recommend updating Security Group immediately.
+
+# 3. SAFETY & COMPLIANCE POLICIES
+# -----------------------------------------------------------------
+- SAFETY_1: [PROD] Never execute 'rm -rf' commands via automation. Use mv to /tmp or compression.
+- SAFETY_2: [DB] Never auto-restart Database instances. Failover is handled by RDS/Cluster. Only alert.
+- SAFETY_3: [SSM] All SSM commands must timeout after 60 seconds to prevent hanging agents.
