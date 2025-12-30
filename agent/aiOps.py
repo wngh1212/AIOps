@@ -18,28 +18,49 @@ class ChatOpsClient:
         if matches_generic:
             return "\n".join(matches_generic).strip()
 
-        return text.strip()
+        #  파이썬 코드처럼 보이는 라인만 필터링
+        lines = text.split("\n")
+        code_lines = []
+        for line in lines:
+            s = line.strip()
+            # 번호 매기기(1. 2.) 등으로 시작하면 스킵
+            if re.match(r"^\d+\.", s):
+                continue
+            # 일반적인 텍스트 문장은 스킵 (단, =, (, #, import 등이 있으면 코드로 간주)
+            if re.match(r"^(import|from|print|ec2|s3|def|class|#)", s) or (
+                "=" in s and "(" in s
+            ):
+                code_lines.append(line)
+
+        return "\n".join(code_lines) if code_lines else text.strip()
 
     def _auto_fix_code(self, code):
+        """
+        [Auto-Fix] 구문 오류(Syntax Error) 및 환각 교정
+        """
         fixed = code
 
-        fixed = re.sub(r"^import boto3.*$", "", fixed, flags=re.MULTILINE)
+        # 모든 import 문 제거 (import ec2, import boto3 등 방지)
+        fixed = re.sub(r"^\s*import\s+.*$", "", fixed, flags=re.MULTILINE)
+        fixed = re.sub(r"^\s*from\s+.*$", "", fixed, flags=re.MULTILINE)
 
-        # ec2 = boto3.client(...) -> ec2 = ec2
-        fixed = re.sub(r"(\w+)\s*=\s*boto3\.client.*", r"\1 = \1", fixed)
+        #  클라이언트 객체 재할당 방지
+        # ec2 = boto3.client(...) 패턴을 주석 처리하거나 무력화
+        if "boto3.client" in fixed:
+            fixed = re.sub(
+                r"(\w+)\s*=\s*boto3\.client.*", r"# \1 client is pre-loaded", fixed
+            )
 
         # security-group 서비스 환각 수정
-        # 모델이 boto3.client('security-group')을 시도하면 ec2로 변경
         if "client('security-group')" in fixed or 'client("security-group")' in fixed:
             fixed = fixed.replace("client('security-group')", "ec2")
             fixed = fixed.replace('client("security-group")', "ec2")
 
-        #  VPC 파라미터 수정 (CidrIp -> CidrBlock)
+        # 파라미터 교정 (CidrIp -> CidrBlock)
         fixed = fixed.replace("CidrIp=", "CidrBlock=")
         fixed = fixed.replace("Cidr=", "CidrBlock=")
 
-        # Security Group - Description 강제 주입
-        # create_security_group 호출 시 Description이 없으면 추가
+        #  Security Group Description 강제 주입
         if "create_security_group" in fixed and "Description" not in fixed:
             fixed = re.sub(
                 r"(GroupName\s*=\s*['\"][^'\"]+['\"])",
@@ -47,8 +68,7 @@ class ChatOpsClient:
                 fixed,
             )
 
-        # S3 Config 주입
-        # 괄호 짝을 깨지 않도록 create_bucket 함수 내부에만 주입
+        # Bucket='name' 뒤에 설정을 안전하게 삽입
         if "create_bucket" in fixed and "CreateBucketConfiguration" not in fixed:
             fixed = re.sub(
                 r"(Bucket\s*=\s*['\"][^'\"]+['\"])",
@@ -56,6 +76,7 @@ class ChatOpsClient:
                 fixed,
             )
 
+        # S3 불필요 파라미터 제거
         if "create_bucket" in fixed and "VpcId=" in fixed:
             fixed = re.sub(r",?\s*VpcId\s*=\s*[^,)]+", "", fixed)
 
@@ -69,40 +90,39 @@ class ChatOpsClient:
             query = user_input.replace("SOP", "").replace("find", "").strip()
             return self.server.call_tool("search_sop", {"query": query})
 
+        # 프롬프트 개선
+        # 설명 텍스트를 제거하고 순수 코드 예시만 제공
         prompt = f"""
         [ROLE]
-        You are an AWS Python Automation Expert.
+        Python Automation Script Generator.
 
-        [CONTEXT]
-        - Variables `ec2`, `s3` are ALREADY initialized. Use them directly.
-        - **Security Groups** are managed via `ec2` client (NOT 'security-group' client).
-        - **Subnets** require `VpcId` and `CidrBlock`.
-        - **S3 Buckets** do NOT assume `VpcId`.
+        [ENVIRONMENT]
+        - Variables `ec2`, `s3` are PRE-LOADED. Use them directly.
+        - NO imports allowed. NO re-initialization allowed.
 
-        [CODE TEMPLATES (Follow these exactly)]
-        1. Create VPC:
-           vpc = ec2.create_vpc(CidrBlock='10.0.0.0/16')
-           print(vpc['Vpc']['VpcId'])
+        [CORRECT CODE EXAMPLES - COPY THESE PATTERNS]
+        # Create VPC
+        vpc = ec2.create_vpc(CidrBlock='10.0.0.0/16')
+        print(vpc['Vpc']['VpcId'])
 
-        2. Create Subnet:
-           sub = ec2.create_subnet(VpcId='vpc-xxx', CidrBlock='10.0.1.0/24')
-           print(sub['Subnet']['SubnetId'])
+        # Create Subnet
+        sub = ec2.create_subnet(VpcId='vpc-xxx', CidrBlock='10.0.1.0/24')
+        print(sub['Subnet']['SubnetId'])
 
-        3. Create Security Group:
-           sg = ec2.create_security_group(GroupName='MySG', Description='My SG', VpcId='vpc-xxx')
-           print(sg['GroupId'])
+        # Create Security Group
+        sg = ec2.create_security_group(GroupName='MySG', Description='My SG', VpcId='vpc-xxx')
+        print(sg['GroupId'])
 
-        4. Create S3:
-           s3.create_bucket(Bucket='my-bucket')
-           print("Success")
+        # Create S3 Bucket
+        s3.create_bucket(Bucket='my-bucket')
+        print("Success")
 
         [REQUEST]
-        Generate Python code for: "{user_input}"
+        "{user_input}"
 
-        [CONSTRAINT]
-        - Output ONLY the Python code block.
-        - Do not import boto3.
-        - Do not re-initialize clients.
+        [OUTPUT REQUIREMENT]
+        - Return ONLY the executable Python code block.
+        - Do not include "Here is the code" or markdown text.
         """
 
         raw = self.llm.invoke(prompt)

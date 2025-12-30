@@ -1,7 +1,7 @@
-Test Report - 2025-12-30 16:01:51.977257
+Test Report - 2025-12-30 16:18:38.877631
 ============================================================
 Step: SOP Search
-Time: 0.13s
+Time: 0.12s
 Prompt: What to do if a server has high CPU usage? Find SOP.
 Response: # =================================================================
 # AWS AIOps Enterprise Standard Operating Procedures (SOP)
@@ -82,30 +82,35 @@ Response: # =================================================================
 - SAFETY_3: [SSM] All SSM commands must timeout after 60 seconds to prevent hanging agents.
 ----------------------------------------
 Step: Create VPC
-Time: 135.46s
+Time: 70.13s
 Prompt: Create a VPC with cidr 10.50.0.0/16. Print the vpc id.
-Response: [Result]
-❌ Code Execution Error: invalid syntax (<string>, line 1)
-----------------------------------------
-Step: Create Subnet
-Time: 123.33s
-Prompt: Create a subnet in 'None' with cidr 10.50.1.0/24. Print the subnet id.
 Response: [Result]
 
 [System] Executing Generated Code...
 
-subnet-06820847ccaaa1929
+vpc-0fa930d16630a3c1d
+
+----------------------------------------
+Step: Create Subnet
+Time: 189.43s
+Prompt: Create a subnet in 'vpc-0fa930d16630a3c1d' with cidr 10.50.1.0/24. Print the subnet id.
+Response: [Result]
+
+[System] Executing Generated Code...
+
+subnet-0fa769a9a90c45041
 
 ----------------------------------------
 Step: Create SG
-Time: 82.13s
-Prompt: Create a security group in 'None' named 'E2E-SG'. Print the group id.
+Time: 81.62s
+Prompt: Create a security group in 'vpc-0fa930d16630a3c1d' named 'E2E-SG'. Print the group id.
 Response: [Result]
-❌ Code Execution Error: No module named 'ec2'
+❌ Code Execution Error: name 'sg' is not defined
 ----------------------------------------
 Step: Create S3
-Time: 358.07s
-Prompt: Create an S3 bucket named 'e2e-test-df6398' in ap-northeast-2. Print 'Success'.
+Time: 89.35s
+Prompt: Create an S3 bucket named 'e2e-test-2e3511' in ap-northeast-2. Print 'Success'.
 Response: [Result]
-❌ Code Execution Error: invalid syntax (<string>, line 5)
+❌ Code Execution Error: Parameter validation failed:
+Unknown parameter in input: "Location", must be one of: ACL, Bucket, CreateBucketConfiguration, GrantFullControl, GrantRead, GrantReadACP, GrantWrite, GrantWriteACP, ObjectLockEnabledForBucket, ObjectOwnership
 ----------------------------------------
