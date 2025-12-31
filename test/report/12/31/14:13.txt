@@ -1,0 +1,150 @@
+[Setup] 시스템 초기화 중...
+
+[Phase 1] 인프라 구축 및 문맥 유지 테스트 시작
+[DEBUG LLM RAW] {
+  "operation": "create-vpc",
+  "parameters": {
+    "vpc_id...
+[MCP Execution] Tool: create_vpc | Args: {'cidr': '10.20.0.0/16'}
+
+--------------------------------------------------
+[TEST] Create VPC
+Input: "Create a new VPC with CIDR 10.20.0.0/16"
+Response:
+Result:
+{'status': 'success', 'resource_id': 'vpc-0a978baf5c7d6f46a', 'type': 'vpc'}
+--------------------------------------------------
+[DEBUG LLM RAW] {
+"response": {
+"data": {
+"subnets": [
+{
+"id": "sn-123456789...
+⚠️ Parsing Failed. Using Fallback.
+
+--------------------------------------------------
+[TEST] Create Subnet (Context)
+Input: "Add a subnet to that VPC with CIDR 10.20.1.0/24"
+Response:
+❌ 명령 불명확.
+--------------------------------------------------
+F
+[Phase 2] 모니터링 및 강제 조회 로직 테스트 시작
+[DEBUG LLM RAW] {
+"instances": [
+{
+"id": "instance-0123456789abcdef",
+"publi...
+⚠️ Parsing Failed. Using Fallback.
+[MCP Execution] Tool: list_instances | Args: {'status': 'all'}
+
+--------------------------------------------------
+[TEST] List Instances (Force All)
+Input: "Show instances"
+Response:
+Result:
+ID: i-04e081a5d1c996629 | Name: TestServer | State: STOPPED
+--------------------------------------------------
+[DEBUG LLM RAW] {
+"infrastructure": {
+"vpc_id": "vpc-0a978baf5c7d6f46a",
+"su...
+⚠️ Parsing Failed. Using Fallback.
+[MCP Execution] Tool: list_instances | Args: {'status': 'all'}
+
+--------------------------------------------------
+[TEST] Topology
+Input: "Show me the current infrastructure topology"
+Response:
+Result:
+ID: i-04e081a5d1c996629 | Name: TestServer | State: STOPPED
+--------------------------------------------------
+F
+[Phase 3] 운영 및 FinOps 테스트 시작
+[DEBUG LLM RAW] {
+"cost": {
+"vpc": {
+"create": 50,
+"update": 20,
+"delete": 1...
+⚠️ Parsing Failed. Using Fallback.
+[MCP Execution] Tool: get_cost | Args: {}
+
+--------------------------------------------------
+[TEST] Check Cost
+Input: "How much is my estimated cost this month?"
+Response:
+Result:
+This Month's Estimated Cost: $10.50
+--------------------------------------------------
+[DEBUG LLM RAW] {
+"create-vpc": true,
+"create-subnet": false,
+"list-instance...
+[MCP Execution] Tool: create_vpc | Args: {'vpc_id': 'vpc-0a978baf5c7d6f46a'}
+
+--------------------------------------------------
+[TEST] Create Snapshot
+Input: "Create a snapshot for Test-Auto-Bot"
+Response:
+Result:
+{'status': 'success', 'resource_id': 'vpc-059c61f04b67d8524', 'type': 'vpc'}
+--------------------------------------------------
+F
+[Phase 4] 안전장치(Human-in-the-Loop) 테스트 시작
+[DEBUG LLM RAW] {
+  "response": {
+    "create-vpc": {
+      "status": "SUCCE...
+[MCP Execution] Tool: create_vpc | Args: {'status': 'SUCCESS', 'output': {'VPCId': 'vpc-059c61f04b67d8524'}, 'vpc_id': 'vpc-059c61f04b67d8524'}
+
+--------------------------------------------------
+[TEST] Resize Instance (with Auto-Approve)
+Input: "Change the type of 'Test-Auto-Bot' to t3.small"
+Response:
+Result:
+{'status': 'success', 'resource_id': 'vpc-0935de7eced9b44c4', 'type': 'vpc'}
+--------------------------------------------------
+F
+[Finish] 모든 테스트 시나리오 종료
+남은 리소스(VPC, Subnet)는 'cleanup_aws.py'를 통해 정리해주세요.
+
+======================================================================
+FAIL: test_01_context_build (__main__.TestAIOpsScenarios.test_01_context_build)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/gangjuho/Desktop/aiOps/test/test_suite.py", line 87, in test_01_context_build
+    self.assertIsNotNone(
+AssertionError: unexpectedly None : ❌ Subnet ID가 메모리에 저장되지 않았습니다.
+
+======================================================================
+FAIL: test_02_observability (__main__.TestAIOpsScenarios.test_02_observability)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/gangjuho/Desktop/aiOps/test/test_suite.py", line 128, in test_02_observability
+    self.assertTrue("VPC:" in res, "❌ 토폴로지 트리가 출력되지 않았습니다.")
+AssertionError: False is not true : ❌ 토폴로지 트리가 출력되지 않았습니다.
+
+======================================================================
+FAIL: test_03_operations (__main__.TestAIOpsScenarios.test_03_operations)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/gangjuho/Desktop/aiOps/test/test_suite.py", line 157, in test_03_operations
+    self.assertTrue("Snapshot Started" in res, "❌ 스냅샷 생성 실패")
+AssertionError: False is not true : ❌ 스냅샷 생성 실패
+
+======================================================================
+FAIL: test_04_safety_checks (__main__.TestAIOpsScenarios.test_04_safety_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/mock.py", line 1390, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gangjuho/Desktop/aiOps/test/test_suite.py", line 174, in test_04_safety_checks
+    self.assertTrue(
+AssertionError: False is not true : ❌ 리사이징이 수행되지 않았습니다.
+
+----------------------------------------------------------------------
+Ran 4 tests in 1675.163s
+
+FAILED (failures=4)

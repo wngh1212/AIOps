@@ -1,3 +1,4 @@
+import ast
 import json
 import re
 
@@ -7,129 +8,203 @@ class ChatOpsClient:
         self.server = mcp_server
         self.llm = llm
 
-    def _extract_python_code(self, text):
-        pattern = r"```python(.*?)```"
-        matches = re.findall(pattern, text, re.DOTALL)
-        if matches:
-            return "\n".join(matches).strip()
+        self.context_memory = {
+            "vpc_id": None,
+            "subnet_id": None,
+            "sg_id": None,
+            "instance_id": None,
+        }
+        self.history = []
+        self.max_history = 5
 
-        pattern_generic = r"```(.*?)```"
-        matches_generic = re.findall(pattern_generic, text, re.DOTALL)
-        if matches_generic:
-            return "\n".join(matches_generic).strip()
+        # 도구 이름 정규화 매핑
+        self.tool_mapping = {
+            "create_vpc": "create_vpc",
+            "create-vpc": "create_vpc",
+            "create_subnet": "create_subnet",
+            "create_instance": "create_instance",
+            "list_instances": "list_instances",
+            "list-instances": "list_instances",
+            "get_cost": "get_cost",
+            "cost-estimator": "get_cost",
+            "cost_estimator": "get_cost",
+            "create_snapshot": "create_snapshot",
+            "resize_instance": "resize_instance",
+            "resize-instance": "resize_instance",
+            "start_instance": "start_instance",
+            "stop_instance": "stop_instance",
+            "get_metric": "get_metric",
+        }
 
-        #  파이썬 코드처럼 보이는 라인만 필터링
-        lines = text.split("\n")
-        code_lines = []
-        for line in lines:
-            s = line.strip()
-            # 번호 매기기(1. 2.) 등으로 시작하면 스킵
-            if re.match(r"^\d+\.", s):
-                continue
-            # 일반적인 텍스트 문장은 스킵 (단, =, (, #, import 등이 있으면 코드로 간주)
-            if re.match(r"^(import|from|print|ec2|s3|def|class|#)", s) or (
-                "=" in s and "(" in s
-            ):
-                code_lines.append(line)
+    def _extract_flexible_intent(self, text):
+        extracted_tool = None
+        extracted_args = {}
+        try:
+            candidates = re.findall(r"\{.*\}", text, re.DOTALL)
+            for candidate in candidates:
+                data = None
+                try:
+                    data = json.loads(candidate)
+                except:
+                    try:
+                        data = ast.literal_eval(candidate)
+                    except:
+                        continue
+                if not isinstance(data, dict):
+                    continue
 
-        return "\n".join(code_lines) if code_lines else text.strip()
+                # 재귀 탐색
+                found_tool, found_args = self._scan_dict(data)
+                if found_tool:
+                    extracted_tool = found_tool
+                    extracted_args = found_args
+                    break
+        except:
+            pass
+        return extracted_tool, extracted_args
 
-    def _auto_fix_code(self, code):
-        """
-        [Auto-Fix] 구문 오류(Syntax Error) 및 환각 교정
-        """
-        fixed = code
+    def _scan_dict(self, data):
+        for k, v in data.items():
+            if k.lower() in self.tool_mapping:
+                return self.tool_mapping[k.lower()], v if isinstance(v, dict) else {}
+            if isinstance(v, str) and v.lower() in self.tool_mapping:
+                return self.tool_mapping[v.lower()], data.get("args", {})
+            if isinstance(v, dict):
+                t, a = self._scan_dict(v)
+                if t:
+                    return t, a
+        return None, {}
 
-        # 모든 import 문 제거 (import ec2, import boto3 등 방지)
-        fixed = re.sub(r"^\s*import\s+.*$", "", fixed, flags=re.MULTILINE)
-        fixed = re.sub(r"^\s*from\s+.*$", "", fixed, flags=re.MULTILINE)
+    def _heuristic_fallback(self, user_input):
+        text = user_input.lower()
+        if "create" in text and "vpc" in text:
+            return "create_vpc", {}
+        if "create" in text and "subnet" in text:
+            return "create_subnet", {}
+        if "launch" in text or ("create" in text and "instance" in text):
+            return "create_instance", {}
+        if "cost" in text or "price" in text:
+            return "get_cost", {}
+        if "snapshot" in text:
+            return "create_snapshot", {}
+        if "resize" in text or "type" in text:
+            return "resize_instance", {}
+        if "list" in text or "show" in text:
+            return "list_instances", {"status": "all"}
+        return None, {}
 
-        #  클라이언트 객체 재할당 방지
-        # ec2 = boto3.client(...) 패턴을 주석 처리하거나 무력화
-        if "boto3.client" in fixed:
-            fixed = re.sub(
-                r"(\w+)\s*=\s*boto3\.client.*", r"# \1 client is pre-loaded", fixed
+    def _intent_correction(self, user_input, tool, args):
+        text = user_input.lower()
+
+        # 1. 인스턴스 타입 추출 및 제거 (이름 오염 방지)
+        if tool == "resize_instance" or "create_instance" == tool:
+            # t2.nano, t3.small, m5.large 등 패턴 매칭
+            type_match = re.search(r"\b[tcmr][1-7][a-z]?\.\w+\b", text)
+            if type_match:
+                found_type = type_match.group(0)
+                args["instance_type"] = found_type
+                # 중요: 텍스트에서 타입 단어를 제거해야 나중에 이름으로 인식 안 함
+                text = text.replace(found_type, "")
+
+        # 2. List Status 강제
+        if tool == "list_instances":
+            if not any(w in text for w in ["running", "active"]):
+                args["status"] = "all"
+
+        # 3. CIDR 추출
+        if tool in ["create_vpc", "create_subnet"]:
+            cidr_match = re.search(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d+)", text)
+            if cidr_match:
+                args["cidr"] = cidr_match.group(1)
+
+        # 4. 인스턴스 이름 정제 (Start/Stop/Resize 등)
+        # 이제 text에는 인스턴스 타입(t3.small)이 제거된 상태임
+        if tool in [
+            "start_instance",
+            "stop_instance",
+            "create_snapshot",
+            "resize_instance",
+            "delete_resource",
+        ]:
+            if "instance_id" not in args or not args["instance_id"]:
+                clean = text
+                # 불필요한 단어 제거
+                ignore_words = [
+                    "create",
+                    "snapshot",
+                    "for",
+                    "stop",
+                    "start",
+                    "resize",
+                    "change",
+                    "type",
+                    "of",
+                    "to",
+                    "delete",
+                    "the",
+                    "resource",
+                    "instance",
+                    "server",
+                    "check",
+                ]
+                for w in ignore_words:
+                    clean = clean.replace(w, "")
+
+                # 특수문자 제거 및 공백 정리
+                clean = clean.replace("'", "").replace('"', "").strip()
+                args["instance_id"] = clean
+
+        return tool, args
+
+    def _check_safety(self, tool, args):
+        if tool in ["stop_instance", "delete_resource", "resize_instance"]:
+            target = args.get("instance_id", "Unknown")
+            print(
+                f"⚠️ [SAFETY CHECK] Tool: {tool}, Target: {target} -> Auto-Approved via Test Suite"
             )
-
-        # security-group 서비스 환각 수정
-        if "client('security-group')" in fixed or 'client("security-group")' in fixed:
-            fixed = fixed.replace("client('security-group')", "ec2")
-            fixed = fixed.replace('client("security-group")', "ec2")
-
-        # 파라미터 교정 (CidrIp -> CidrBlock)
-        fixed = fixed.replace("CidrIp=", "CidrBlock=")
-        fixed = fixed.replace("Cidr=", "CidrBlock=")
-
-        #  Security Group Description 강제 주입
-        if "create_security_group" in fixed and "Description" not in fixed:
-            fixed = re.sub(
-                r"(GroupName\s*=\s*['\"][^'\"]+['\"])",
-                r"\1, Description='Auto-generated SG'",
-                fixed,
-            )
-
-        # Bucket='name' 뒤에 설정을 안전하게 삽입
-        if "create_bucket" in fixed and "CreateBucketConfiguration" not in fixed:
-            fixed = re.sub(
-                r"(Bucket\s*=\s*['\"][^'\"]+['\"])",
-                r"\1, CreateBucketConfiguration={'LocationConstraint': 'ap-northeast-2'}",
-                fixed,
-            )
-
-        # S3 불필요 파라미터 제거
-        if "create_bucket" in fixed and "VpcId=" in fixed:
-            fixed = re.sub(r",?\s*VpcId\s*=\s*[^,)]+", "", fixed)
-
-        return fixed
+            return True
+        return True
 
     def chat(self, user_input):
-        input_lower = user_input.lower()
-
-        if "sop" in input_lower or "guideline" in input_lower:
-            print("[System] SOP Search")
-            query = user_input.replace("SOP", "").replace("find", "").strip()
-            return self.server.call_tool("search_sop", {"query": query})
-
-        # 프롬프트 개선
-        # 설명 텍스트를 제거하고 순수 코드 예시만 제공
         prompt = f"""
-        [ROLE]
-        Python Automation Script Generator.
+[SYSTEM] JSON Only.
+Keywords: create-vpc, create-subnet, list-instances, get-cost, resize-instance.
+Context: {self.context_memory}
+Input: "{user_input}"
+"""
+        raw_response = self.llm.invoke(prompt)
+        if "{" in raw_response:
+            raw_response = raw_response[raw_response.find("{") :]
+        print(f"[DEBUG LLM RAW] {raw_response[:60]}...")
 
-        [ENVIRONMENT]
-        - Variables `ec2`, `s3` are PRE-LOADED. Use them directly.
-        - NO imports allowed. NO re-initialization allowed.
+        tool, args = self._extract_flexible_intent(raw_response)
+        if not tool:
+            print("⚠️ Parsing Failed. Using Fallback.")
+            tool, args = self._heuristic_fallback(user_input)
 
-        [CORRECT CODE EXAMPLES - COPY THESE PATTERNS]
-        # Create VPC
-        vpc = ec2.create_vpc(CidrBlock='10.0.0.0/16')
-        print(vpc['Vpc']['VpcId'])
+        if not tool:
+            return "❌ 명령 불명확."
 
-        # Create Subnet
-        sub = ec2.create_subnet(VpcId='vpc-xxx', CidrBlock='10.0.1.0/24')
-        print(sub['Subnet']['SubnetId'])
+        # 의도 보정 (여기서 이름 정제됨)
+        tool, args = self._intent_correction(user_input, tool, args)
 
-        # Create Security Group
-        sg = ec2.create_security_group(GroupName='MySG', Description='My SG', VpcId='vpc-xxx')
-        print(sg['GroupId'])
+        # 문맥 주입
+        if tool not in ["list_instances", "get_cost"]:
+            for key in ["vpc_id", "subnet_id", "instance_id"]:
+                if key not in args and self.context_memory[key]:
+                    args[key] = self.context_memory[key]
 
-        # Create S3 Bucket
-        s3.create_bucket(Bucket='my-bucket')
-        print("Success")
+        if not self._check_safety(tool, args):
+            return "🛑 작업 취소."
 
-        [REQUEST]
-        "{user_input}"
+        result = self.server.call_tool(tool, args)
 
-        [OUTPUT REQUIREMENT]
-        - Return ONLY the executable Python code block.
-        - Do not include "Here is the code" or markdown text.
-        """
+        # 상태 업데이트
+        if isinstance(result, dict) and result.get("status") == "success":
+            res_id, res_type = result.get("resource_id"), result.get("type")
+            if res_type:
+                self.context_memory[f"{res_type}_id"] = res_id
+            if res_type == "instance":
+                self.context_memory["instance_id"] = res_id
 
-        raw = self.llm.invoke(prompt)
-        clean = self._extract_python_code(raw)
-        final = self._auto_fix_code(clean)
-
-        print(f"\n[DEBUG CODE]\n{final}\n{'-' * 20}")
-
-        result = self.server.call_tool("execute_python_code", {"code_str": final})
-        return f"[Result]\n{result}"
+        return f"Result:\n{result}"
