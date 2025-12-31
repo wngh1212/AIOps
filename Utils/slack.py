@@ -12,7 +12,6 @@ class SlackNotifier:
             print(f"[Slack Skip] URL 미설정: {title}")
             return
 
-        # 슬랙 메시지 페이로드 구성
         payload = {
             "blocks": [
                 {

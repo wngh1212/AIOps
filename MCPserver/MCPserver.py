@@ -50,6 +50,24 @@ class MCPServer:
             pass
         return None
 
+    def _get_default_subnet(self):
+        try:
+            # 'default-for-az' 필터를 사용하여 AWS가 지정한 기본 서브넷만 조회
+            response = self.ec2.describe_subnets(
+                Filters=[{"Name": "default-for-az", "Values": ["true"]}]
+            )
+            if response["Subnets"]:
+                # 여러 개가 있을 수 있으므로 그중 첫 번째를 선택
+                target = response["Subnets"][0]["SubnetId"]
+                az = response["Subnets"][0]["AvailabilityZone"]
+                print(f"[Auto-detected] Default Subnet: {target} ({az})")
+                return target
+            else:
+                print("[Warning] No Default Subnet found in this account.")
+        except Exception as e:
+            print(f"❌ Subnet Auto-detection failed: {e}")
+        return None
+
     def call_tool(self, tool_name, args):
         print(f"[MCP Execution] Tool: {tool_name} | Args: {args}")
         try:
@@ -57,18 +75,28 @@ class MCPServer:
                 return self.create_vpc(args.get("cidr"))
             elif tool_name == "create_subnet":
                 return self.create_subnet(args.get("vpc_id"), args.get("cidr"))
+
             elif tool_name == "create_instance":
                 img = self._clean_str(args.get("image_id"))
                 if not img or not img.startswith("ami-"):
                     print("Validating AMI ID...")
                     img = self._get_latest_ami()
+
+                # 서브넷 ID가 없으면 자동 검색 시도
+                sub_id = args.get("subnet_id")
+                if not sub_id:
+                    sub_id = self._get_default_subnet()
+                    if not sub_id:
+                        return "Error: No Subnet provided and failed to auto-detect one in ap-northeast-2a."
+
                 return self.create_instance(
                     img,
                     args.get("instance_type", "t2.nano"),
-                    args.get("subnet_id"),
+                    sub_id,
                     args.get("sg_id"),
                     self._clean_str(args.get("name", "new-instance")),
                 )
+
             elif tool_name == "list_instances":
                 return self.list_instances(args.get("status", "all"))
             elif tool_name == "get_cost":
@@ -89,11 +117,8 @@ class MCPServer:
                 return self.start_instance(args.get("instance_id"))
             elif tool_name == "stop_instance":
                 return self.stop_instance(args.get("instance_id"))
-
-            # [NEW] 삭제 기능 추가 (마지막 테스트 통과용)
             elif tool_name == "delete_resource":
                 return self.delete_resource(args.get("instance_id"))
-
             else:
                 return f"Error: Unknown tool {tool_name}"
         except Exception as e:
@@ -125,17 +150,25 @@ class MCPServer:
 
     def create_instance(self, image_id, instance_type, subnet_id, sg_id, name):
         image_id = self._clean_str(image_id)
-        print(f"Launching: AMI={image_id}, Type={instance_type}, Zone=ap-northeast-2a")
-        res = self.ec2.run_instances(
-            ImageId=image_id,
-            InstanceType=instance_type,
-            SubnetId=subnet_id,
-            MinCount=1,
-            MaxCount=1,
-            TagSpecifications=[
+        print(
+            f"Launching: AMI={image_id}, Type={instance_type}, Subnet={subnet_id}, Zone=ap-northeast-2a"
+        )
+
+        # sg_id가 None이면 AWS Default SG 사용되므로 그대로 둠
+        run_args = {
+            "ImageId": image_id,
+            "InstanceType": instance_type,
+            "SubnetId": subnet_id,
+            "MinCount": 1,
+            "MaxCount": 1,
+            "TagSpecifications": [
                 {"ResourceType": "instance", "Tags": [{"Key": "Name", "Value": name}]}
             ],
-        )
+        }
+        if sg_id:
+            run_args["SecurityGroupIds"] = [sg_id]
+
+        res = self.ec2.run_instances(**run_args)
         instance_id = res["Instances"][0]["InstanceId"]
         time.sleep(2)
         return {"status": "success", "resource_id": instance_id, "type": "instance"}
@@ -211,22 +244,20 @@ class MCPServer:
             pass
         return "\n".join(lines)
 
-    # [수정] Start/Stop 메시지 보강
     def start_instance(self, identifier):
         tid = self._resolve_id(identifier)
         if not tid:
             return f"Target '{identifier}' not found."
-        # self.ec2.start_instances(InstanceIds=[tid])
+        self.ec2.start_instances(InstanceIds=[tid])
         return f"Starting instance {identifier} ({tid})..."
 
     def stop_instance(self, identifier):
         tid = self._resolve_id(identifier)
         if not tid:
             return f"Target '{identifier}' not found."
-        # self.ec2.stop_instances(InstanceIds=[tid])
+        self.ec2.stop_instances(InstanceIds=[tid])
         return f"Stopping instance {identifier} ({tid})..."
 
-    # [NEW] 삭제 기능 구현
     def delete_resource(self, identifier):
         tid = self._resolve_id(identifier)
         if not tid:

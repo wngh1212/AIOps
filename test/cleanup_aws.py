@@ -18,7 +18,6 @@ def cleanup_resources():
     print(f"Found {len(vpcs)} VPCs. Checking for cleanup candidates...")
 
     for vpc in vpcs:
-        # 기본 VPC는 삭제하지 않음
         if vpc.is_default:
             print(f"Skipping Default VPC: {vpc.id}")
             continue

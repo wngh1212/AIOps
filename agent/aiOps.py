@@ -85,10 +85,9 @@ class ChatOpsClient:
         return None, {}
 
     def _finalize_args(self, user_input, tool, args):
-        """파라미터 정제 및 문맥 주입"""
         text = user_input.lower()
 
-        # 1. 인스턴스 타입 추출 (t2.nano 등)
+        # 인스턴스 타입 추출
         if tool in ["resize_instance", "create_instance"]:
             type_match = re.search(r"\b[tcmr][1-7][a-z]?\.\w+\b", text)
             if type_match:
@@ -96,13 +95,13 @@ class ChatOpsClient:
                 args["instance_type"] = found_type
                 text = text.replace(found_type, "")  # 문장에서 타입 제거
 
-        # 2. CIDR 추출
+        # CIDR 추출
         if tool in ["create_vpc", "create_subnet"]:
             cidr_match = re.search(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d+)", text)
             if cidr_match:
                 args["cidr"] = cidr_match.group(1)
 
-        # 3. 이름(ID) 추출
+        # ID 추출
         target_keys = []
         if tool == "create_instance":
             target_keys = ["name"]
@@ -156,12 +155,12 @@ class ChatOpsClient:
                     ]
                 )
 
-                # 단어 단위 필터링 (중요: split 사용)
+                # 단어 단위 필터링
                 words = clean.split()
                 filtered_words = [w for w in words if w not in ignore_words]
                 args[key] = " ".join(filtered_words).strip()
 
-        # 4. 문맥 메모리 자동 주입
+        # 문맥 메모리 자동 주입
         if tool not in ["list_instances", "get_cost", "generate_topology"]:
             for key in ["vpc_id", "subnet_id", "instance_id"]:
                 if key not in args and self.context_memory[key]:
@@ -201,10 +200,10 @@ class ChatOpsClient:
                 self.context_memory["instance_id"] = res_id
 
     def chat(self, user_input):
-        # 1. 규칙 기반 라우팅 (Fast Track)
+        # 규칙 기반 라우팅
         tool, args = self._rule_based_routing(user_input)
 
-        # 2. LLM Fallback (Slow Track)
+        # LLM Fallback
         if not tool:
             prompt = f"[SYSTEM] JSON Only. Input: {user_input}"
             raw_response = self.llm.invoke(prompt)
@@ -215,12 +214,12 @@ class ChatOpsClient:
                 args = llm_args
 
         if not tool:
-            return f"❌ 명령 불명확. (Input: {user_input})"
+            return f"❌ 명령을 정확히 이해하지 못함 (Input: {user_input})"
 
         # 3. 실행 준비 및 검사
         args = self._finalize_args(user_input, tool, args)
         if not self._check_safety(tool, args):
-            return "작업 취소."
+            return "작업 취소"
 
         # 4. 실행
         print(f"[Action] Tool: {tool} | Args: {args}")
