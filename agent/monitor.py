@@ -95,9 +95,7 @@ class MonitorAgent:
 
     def _analyze_with_llm(self, name, trigger, logs):
         related_sop = self.sop_manager.search_guideline(f"{trigger} {name}")
-        """
-        LLM에게 상황을 판단하게 하고, JSON 파싱 실패 시 텍스트에서 의도를 추출합니다.
-        """
+
         prompt = f"""
         [ROLE] Senior AWS SRE.
         [GOAL] Recover service based on logs.
@@ -142,7 +140,7 @@ class MonitorAgent:
             action = "MANUAL_CHECK"
 
         if action:
-            # 원인과 근거는 추출하기 어려우니 Raw 텍스트의 앞부분을  사용
+            # 원인과 근거는 추출하기 어려워숴 Raw 텍스트의 앞부분을  사용
             return action, "AI 텍스트 분석됨 (JSON 포맷 에러)", "텍스트 내 키워드 감지"
 
         return None, None, None

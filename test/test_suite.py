@@ -172,13 +172,13 @@ class TestAIOpsScenarios(unittest.TestCase):
             "Resized" in res or "stopped" in res, "❌ 리사이징이 수행되지 않았습니다."
         )
 
-        # 4-2. 인스턴스 정지 (승인 필요)
+        # 인스턴스 정지
         query = "Stop the instance 'Test-Auto-Bot'"
         res = self.agent.chat(query)
         self._log_step("Stop Instance (with Auto-Approve)", query, res)
         self.assertTrue("Stopping" in res, "❌ 인스턴스 정지가 수행되지 않았습니다.")
 
-        # 4-3. 삭제 (승인 필요)
+        # 삭제
         # 마지막으로 리소스를 정리합니다.
         query = "Delete the resource 'Test-Auto-Bot'"
         res = self.agent.chat(query)

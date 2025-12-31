@@ -10,14 +10,14 @@ class AWSTools:
     def __init__(self, region="ap-northeast-2"):
         self.region = region
 
-        # 자주 쓰는 클라이언트 미리 로드 (코드 실행 시 사용)
+        # 자주 쓰는 클라이언트 미리 로드
         self.ec2 = boto3.client("ec2", region_name=region)
         self.cw = boto3.client("cloudwatch", region_name=region)
         self.logs = boto3.client("logs", region_name=region)
         self.rds = boto3.client("rds", region_name=region)
         self.s3 = boto3.client("s3", region_name=region)
 
-        # 리소스 객체 (편의성)
+        # 리소스 객체
         self.ec2_res = boto3.resource("ec2", region_name=region)
 
     def execute_python_code(self, code_str):
@@ -55,7 +55,6 @@ class AWSTools:
             return f"❌ Code Execution Error: {str(e)}"
 
     def get_inventory(self):
-        # 기존 모니터링용 로직 유지
         try:
             response = self.ec2.describe_instances()
             inventory = []
@@ -77,7 +76,7 @@ class AWSTools:
 
                     state = inst["State"]["Name"]
 
-                    # CPU 메트릭 조회 (최근 5분)
+                    # CPU 메트릭 조회
                     cpu_val = 0.0
                     if state == "running":
                         try:
