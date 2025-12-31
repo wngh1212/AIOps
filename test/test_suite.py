@@ -98,7 +98,7 @@ class TestAIOpsScenarios(unittest.TestCase):
         self.instance_id = self.agent.context_memory["instance_id"]
 
         # 인스턴스 부팅 대기
-        print("⏳ 인스턴스 초기화 대기 중 (10초)...")
+        print("인스턴스 초기화 대기 중 (10초)...")
         time.sleep(10)
 
     # =================================================================
