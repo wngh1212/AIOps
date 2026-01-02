@@ -147,7 +147,7 @@ class ChatOpsClient:
         if not tool:
             # MCP 도구 명칭을 명시적으로 학습시킴
             prompt = f"""[INST] <<SYS>>
-You are an AWS Operations Agent. Respond ONLY in JSON. [cite: 66]
+You are an AWS Operations Agent. Respond ONLY in JSON.
 Available Tools: create_instance, stop_instance, start_instance, delete_resource, resize_instance.
 Note: Use 'create_instance' instead of 'launch'.
 Example: "Launch server" -> {{"tool": "create_instance", "args": {{"name": "server"}}}}

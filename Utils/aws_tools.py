@@ -22,8 +22,7 @@ class AWSTools:
 
     def execute_python_code(self, code_str):
         """
-        [Universal Executor]
-        LLM이 생성한 Python 코드를 샌드박스(제한적) 환경에서 실행하고 결과 출력값을 반환
+        LLM이 생성한 Python 코드를 샌드박스 환경에서 실행하고 결과 출력값을 반환
         """
         old_stdout = sys.stdout
         redirected_output = sys.stdout = StringIO()
@@ -111,7 +110,7 @@ class AWSTools:
         """
         try:
             # 인스턴스 ID를 포함하는 로그 그룹이나 스트림 검색
-            # 실제 환경에 맞춰 LogGroupName을 설정해야 합니다.
+            # 실제 환경에 맞춰 LogGroupName을 설정해야
             log_group = "/var/log/messages"
 
             response = self.logs.filter_log_events(
