@@ -114,11 +114,11 @@ class MCPServer:
                     args.get("instance_id"), args.get("instance_type")
                 )
             elif tool_name == "start_instance":
-                return self.start_instance(args.get("instance_id"))
+                return self.start_instance(args.get("instance_id") or args.get("name"))
             elif tool_name == "stop_instance":
-                return self.stop_instance(args.get("instance_id"))
+                return self.stop_instance(args.get("instance_id") or args.get("name"))
             elif tool_name == "delete_resource":
-                return self.delete_resource(args.get("instance_id"))
+                return self.delete_resource(args.get("instance_id") or args.get("name"))
             else:
                 return f"Error: Unknown tool {tool_name}"
         except Exception as e:

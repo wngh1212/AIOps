@@ -54,16 +54,14 @@ class ChatOpsClient:
             return "generate_topology", {}
         if any(w in text for w in ["list", "show", "check", "inventory"]):
             return "list_instances", {"status": "all"}
-
         return None, {}
 
     def _finalize_args(self, user_input, tool, args):
-        """
-        [Arg Normalization]
-        입력문에서 ID, 타입 등을 추출하고 불필요한 문장이 ID로 들어가는 것을 방지합니다.
-        """
         text = user_input.lower()
-
+        if args.get("instance_id") and (
+            args["instance_id"].startswith("i-12345") or "abcde" in args["instance_id"]
+        ):
+            args["instance_id"] = None
         # 인스턴스 타입 추출
         type_match = re.search(r"\b[tcmr][1-7][a-z]?\.\w+\b", text)
         if type_match:
