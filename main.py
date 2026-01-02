@@ -3,13 +3,15 @@ import sys
 import threading
 import time
 
+from dotenv import load_dotenv
 from langchain_ollama import OllamaLLM
 
 from agent.aiOps import ChatOpsClient
 from agent.monitor import MonitorAgent
 from MCPserver.MCPserver import MCPServer
 
-SLACK_WEBHOOK_URL = ""
+load_dotenv()
+SLACK_WEBHOOK_URL = os.getenv("Slack_API_Key")
 
 
 def print_banner():
