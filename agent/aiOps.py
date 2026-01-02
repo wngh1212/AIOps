@@ -60,7 +60,7 @@ class ChatOpsClient:
     def _finalize_args(self, user_input, tool, args):
         """
         [Arg Normalization]
-        입력문에서 ID, 타입 등을 추출하고 불필요한 문장이 ID로 들어가는 것을 방지합니다. [cite: 117]
+        입력문에서 ID, 타입 등을 추출하고 불필요한 문장이 ID로 들어가는 것을 방지합니다.
         """
         text = user_input.lower()
 
