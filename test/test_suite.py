@@ -6,17 +6,9 @@ from unittest.mock import patch
 
 from langchain_ollama import OllamaLLM
 
-# ----------------------------------------------------------------
-# [경로 설정 수정] 프로젝트 루트를 찾아 sys.path에 추가
-# ----------------------------------------------------------------
-# 1. 현재 파일(test_suite.py)의 절대 경로를 구합니다. (예: .../aiOps/test)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 2. 부모 디렉토리(프로젝트 루트)를 구합니다. (예: .../aiOps)
 project_root = os.path.dirname(current_dir)
-
-# 3. 프로젝트 루트가 sys.path에 없으면 추가합니다.
-# 이렇게 해야 'agent'와 'MCPserver' 패키지를 찾을 수 있습니다.
 if project_root not in sys.path:
     sys.path.append(project_root)
 
@@ -58,25 +50,19 @@ class TestAIOpsScenarios(unittest.TestCase):
         print(f"Response:\n{response}")
         print(f"--------------------------------------------------")
 
-    # =================================================================
-    # Phase 1. Infrastructure Build (문맥 유지 테스트)
-    # =================================================================
     def test_01_context_build(self):
         print("\n[Phase 1] 인프라 구축 및 문맥 유지 테스트 시작")
 
-        # 1-1. VPC 생성
         query = "Create a new VPC with CIDR 10.20.0.0/16"
         res = self.agent.chat(query)
         self._log_step("Create VPC", query, res)
 
-        # 메모리에 VPC ID가 저장되었는지 검증
         self.assertIsNotNone(
             self.agent.context_memory["vpc_id"],
             "❌ VPC ID가 메모리에 저장되지 않았습니다.",
         )
         self.vpc_id = self.agent.context_memory["vpc_id"]
 
-        # 1-2. 서브넷 생성 (VPC ID 언급 없이 'that VPC'로 추론)
         query = "Add a subnet to that VPC with CIDR 10.20.1.0/24"
         res = self.agent.chat(query)
         self._log_step("Create Subnet (Context)", query, res)
@@ -86,7 +72,6 @@ class TestAIOpsScenarios(unittest.TestCase):
             "❌ Subnet ID가 메모리에 저장되지 않았습니다.",
         )
 
-        # 1-3. 인스턴스 생성
         query = "Launch a t2.nano instance named 'Test-Auto-Bot' in the subnet"
         res = self.agent.chat(query)
         self._log_step("Create Instance", query, res)
@@ -101,18 +86,13 @@ class TestAIOpsScenarios(unittest.TestCase):
         print("인스턴스 초기화 대기 중 (10초)...")
         time.sleep(10)
 
-    # =================================================================
-    # Phase 2. Observability & Status (강제 조회 로직 테스트)
-    # =================================================================
     def test_02_observability(self):
         print("\n[Phase 2] 모니터링 및 강제 조회 로직 테스트 시작")
 
-        # 2-1. 전체 조회 (running 키워드 없이도 전체가 나와야 함)
         query = "Show instances"
         res = self.agent.chat(query)
         self._log_step("List Instances (Force All)", query, res)
 
-        # 검증: 결과에 'ID:' 또는 'Test-Auto-Bot'이 포함되어야 함
         self.assertTrue(
             "ID:" in res or "No instances" in res,
             "❌ 목록 조회가 실패했거나 포맷이 올바르지 않습니다.",
