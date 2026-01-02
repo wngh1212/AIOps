@@ -8,7 +8,7 @@ from langchain_ollama import OllamaLLM
 
 from agent.aiOps import ChatOpsClient
 from agent.monitor import MonitorAgent
-from MCPserver.MCPserver import MCPServer
+from MCPServer.MCPserver import MCPServer
 
 load_dotenv()
 SLACK_WEBHOOK_URL = os.getenv("Slack_API_Key")

@@ -75,7 +75,7 @@ class MonitorAgent:
             print("AI가 대응 불필요 또는 판단 보류를 결정했습니다.")
             return
 
-        # 장애 전파 (분석 결과 포함)
+        # 장애 전파
         emoji = "!!!" if tier == 0 else "!!!"
         detect_msg = (
             f"[{emoji} 장애 감지 & 분석] {name}\n"
