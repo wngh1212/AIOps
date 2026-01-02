@@ -1,6 +1,7 @@
 # AIOps: AWS Autonomous Operations Agent
 
 본 프로젝트는 LLM의 추론 능력과 엔지니어의 통제권을 결합한 **'지능형 Assisted Ops'** 시스템을 지향합니다. AWS 클라우드 인프라를 자연어로 관리하고 장애 발생 시 SOP에 기반하여 최적의 복구 액션을 제안 및 실행
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/e32b4fa4-77ae-42ff-ae0d-1f49aef4fcc9" />
 
 ## SRE Principle
 
