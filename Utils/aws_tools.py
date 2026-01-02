@@ -105,6 +105,25 @@ class AWSTools:
             return f"Error getting inventory: {e}"
 
     def get_recent_logs(self, instance_id, lines=50):
-        # 더미 로그 혹은 CloudWatch Logs 연동
-        # 여기서는 단순 예시 텍스트 반환
-        return f"[Mock Log] System logs for {instance_id}: No critical errors found."
+        """
+        [Real Data Integration]
+        실제 CloudWatch Logs에서 인스턴스 관련 로그 스트림을 조회합니다.
+        """
+        try:
+            # 인스턴스 ID를 포함하는 로그 그룹이나 스트림 검색
+            # 실제 환경에 맞춰 LogGroupName을 설정해야 합니다.
+            log_group = "/var/log/messages"
+
+            response = self.logs.filter_log_events(
+                logGroupName=log_group, limit=lines, interleaved=True
+            )
+
+            events = response.get("events", [])
+            if not events:
+                return f"[System] No real logs found in {log_group} for {instance_id}."
+
+            log_contents = [f"[{e['timestamp']}] {e['message']}" for e in events]
+            return "\n".join(log_contents)
+
+        except Exception as e:
+            return f"[Error] Failed to fetch real logs: {str(e)}"
