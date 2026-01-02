@@ -52,7 +52,7 @@ class MCPServer:
 
     def _get_default_subnet(self):
         try:
-            # 'default-for-az' 필터를 사용하여 AWS가 지정한 기본 서브넷만 조회
+            # default-for-az 필터를 사용하여 AWS가 지정한 기본 서브넷만 조회
             response = self.ec2.describe_subnets(
                 Filters=[{"Name": "default-for-az", "Values": ["true"]}]
             )

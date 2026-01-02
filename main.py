@@ -56,7 +56,7 @@ def print_banner():
 def main():
     print_banner()
 
-    print("\nInitializing Core Systems...", end="", flush=True)
+    print("\nInitializing Systems...", end="", flush=True)
     time.sleep(0.5)
     print("\rSystem Ready. Waiting for input.\n")
 
