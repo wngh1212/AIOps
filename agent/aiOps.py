@@ -131,7 +131,7 @@ class ChatOpsClient:
         return True
 
     def _update_internal_state(self, result):
-        """성공한 작업의 리소스 ID를 메모리에 저장합니다."""
+        """성공한 작업의 리소스 ID를 메모리에 저장"""
         if isinstance(result, dict) and result.get("status") == "success":
             res_id = result.get("resource_id")
             res_type = result.get("type")
@@ -141,7 +141,6 @@ class ChatOpsClient:
                 self.context_memory[f"{res_type}_id"] = res_id
 
     def chat(self, user_input):
-        # Read-Only 처리
         tool, args = self._rule_based_routing(user_input)
 
         # Action 처리 저수준 LLM 최적화
@@ -172,7 +171,7 @@ User: {user_input} [/INST]"""
         result = self.server.call_tool(tool, args)
         self._update_internal_state(result)
 
-        # 능동형 어시스트 (Proactive Assist)
+        # 능동형 어시스트
         output = f"[Execution Success]\n{result}"
 
         # 생성 제안

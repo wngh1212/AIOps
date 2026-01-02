@@ -36,7 +36,7 @@ class MonitorAgent:
         print("\n모니터링 종료")
 
     def _run_scan(self):
-        inventory = self.server.call_tool("list_instances")
+        inventory = self.server.call_tool("list_instances", {})
         if "No instances" in inventory or "Error" in inventory:
             return
 
