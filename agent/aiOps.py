@@ -42,8 +42,7 @@ class ChatOpsClient:
 
     def _rule_based_routing(self, user_input):
         """
-        [Fast Track - Read Only]
-        인프라 상태를 변경하지 않는 조회 명령은 즉시 실행하여 Latency를 최소화합니다. [cite: 47, 112]
+        인프라 상태를 변경하지 않는 조회 명령은 즉시 실행하여 Latency를 최소화
         """
         text = user_input.lower()
 
