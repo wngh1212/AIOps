@@ -6,6 +6,6 @@ __pycache__/
 *.py[cod]
 
 .DS_Store
-
+chroma_data/
 image/
 test/
