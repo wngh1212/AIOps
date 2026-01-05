@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import threading
@@ -56,6 +57,7 @@ def print_banner():
 
 
 def main():
+    global monitoring_thread  # 전역 변수로 선언
     print_banner()
 
     print("\nInitializing Systems...", end="", flush=True)
@@ -84,24 +86,31 @@ def main():
 
             if user_input.lower() == "exit":
                 print("\n\033[91mShutting down system...\033[0m")
-                monitor_agent.stop_monitoring()
+                if monitor_agent.is_running:
+                    monitor_agent.stop_monitoring()
+
+                if "monitoring_thread" in globals() and monitoring_thread:
+                    monitoring_thread.join(timeout=5)
                 break
 
             elif user_input.lower() == "auto on":
                 if not monitor_agent.is_running:
                     print("\n\033[92m[AUTO] Self-Healing Monitor ENABLED\033[0m")
-                    t = threading.Thread(
-                        target=monitor_agent.start_monitoring, args=(30,)
+                    monitoring_thread = threading.Thread(
+                        target=monitor_agent.start_monitoring,
+                        args=(30,),
+                        name="MonitoringAgent",
+                        daemon=False,  # ← daemon=False로 변경
                     )
-                    t.daemon = True
-                    t.start()
-                    time.sleep(0.5)
+                    monitoring_thread.start()
                 else:
                     print("Monitoring is already running.")
 
             elif user_input.lower() == "auto off":
                 print("\n\033[93m[AUTO] Self-Healing Monitor DISABLED\033[0m")
                 monitor_agent.stop_monitoring()
+                if "monitoring_thread" in globals() and monitoring_thread:
+                    monitoring_thread.join(timeout=3)
 
             else:
                 # 일반 대화 및 명령 처리
