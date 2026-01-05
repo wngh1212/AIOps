@@ -71,6 +71,61 @@ class MCPServer:
             logger.error(f"Subnet Auto-detection failed: {e}")
         return None
 
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    def get_cost_by_date(self, start_date, end_date):
+        """Human-friendly [start_date, end_date] → Cost Explorer-safe [Start, End)"""
+        try:
+            logger.info(f"Fetching cost for {start_date} ~ {end_date}")
+
+            # 1) 문자열 → datetime
+            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+
+            # 2) 사람이 말한 범위는 [start_dt, end_dt] (둘 다 inclusive)
+            #    Cost Explorer는 [Start, End) 이므로 End는 end_dt + 1일
+            ce_start = start_dt
+
+            # 사용자가 end_date를 미래로 주면 현재 시점 기준으로 자르기
+            today = datetime.now().date()
+            if end_dt.date() > today:
+                end_dt = datetime(today.year, today.month, today.day)
+
+            ce_end = end_dt + timedelta(days=1)
+
+            # 3) End는 "다음 달 1일"을 넘어가면 안 됨 → 현재 달 기준 상한 설정
+            #    예: 오늘이 2026-01-05면 upper_bound = 2026-02-01
+            upper_bound = datetime(today.year, today.month, 1) + timedelta(days=32)
+            upper_bound = upper_bound.replace(day=1)  # 다음 달 1일
+
+            if ce_end > upper_bound:
+                ce_end = upper_bound
+
+            ce_start_str = ce_start.strftime("%Y-%m-%d")
+            ce_end_str = ce_end.strftime("%Y-%m-%d")
+
+            logger.info(
+                f"Calling Cost Explorer with Start={ce_start_str}, End={ce_end_str}"
+            )
+
+            res = self.ce.get_cost_and_usage(
+                TimePeriod={"Start": ce_start_str, "End": ce_end_str},
+                Granularity="MONTHLY",
+                Metrics=["UnblendedCost"],
+            )
+
+            if res["ResultsByTime"]:
+                amt = float(res["ResultsByTime"][0]["Total"]["UnblendedCost"]["Amount"])
+                return f"Cost from {start_date} to {end_date}: ${amt:.2f}"
+            else:
+                return f"Cost from {start_date} to {end_date}: $0.00"
+
+        except Exception as e:
+            logger.error(f"Cost retrieval failed: {e}", exc_info=True)
+            return f"Cost Error: {str(e)}"
+
     def _get_cpu_metric(self, instance_id):
         # 인스턴스의 최근 CPU 사용률 조회
         try:
@@ -97,7 +152,6 @@ class MCPServer:
             return 0.0
 
     def call_tool(self, tool_name, args):
-        # 제거: print(f"[MCP Execution] Tool: {tool_name} | Args: {args}")
         logger.debug(f"[MCP Execution] Tool: {tool_name} | Args: {args}")
 
         try:
