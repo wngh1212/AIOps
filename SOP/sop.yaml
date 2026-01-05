@@ -1,0 +1,57 @@
+roles:
+  ROLE_WEB:
+    tag: Name
+    contains: ["Web", "Frontend", "Nginx", "Apache", "Was"]
+
+  ROLE_DB:
+    tag: Name
+    contains: ["DB", "RDS", "Redis", "Mongo", "Elastic"]
+
+  ROLE_BATCH:
+    tag: Name
+    contains: ["Batch", "Job", "Worker", "Airflow"]
+
+environments:
+  ENV_PROD:
+    tag: Env
+    contains: ["prod", "production", "live"]
+
+  ENV_DEV:
+    tag: Env
+    contains: ["dev", "test", "stage"]
+
+rules:
+  RULE_01:
+    name: PROD_INSTANCE_DOWN
+    severity: P1
+    condition: "(instance_state == 'stopped') AND ENV_PROD"
+    action_type: EC2_START
+    command: null
+    description: >
+      Production server is down.
+      Immediate restart required to recover SLA.
+      Notify Ops team immediately.
+
+  RULE_02:
+    name: DEV_INSTANCE_DOWN
+    severity: P3
+    condition: "(instance_state == 'stopped') AND ENV_DEV"
+    action_type: EC2_START
+    command: null
+    description: >
+      Development server found stopped.
+      Auto-starting for developer convenience.
+
+  RULE_03:
+    name: MEMORY_OOM_KILLER_DETECTED
+    severity: P2
+    condition: >
+      logs contain "Out of memory" OR
+      logs contain "Kill process" OR
+      logs contain "Sacrificed child"
+    action_type: ADVISE_SCALE_UP
+    command: "dmesg | grep -i 'killed process' | tail -n 5"
+    description: >
+      OOM Killer invoked.
+      System is unstable.
+      Do NOT restart blindly.

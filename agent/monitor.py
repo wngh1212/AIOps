@@ -4,14 +4,16 @@ import time
 from datetime import datetime
 
 from Utils.slack import SlackNotifier
+from Utils.sop_manager import SOPManager
 
 
 class MonitorAgent:
-    def __init__(self, mcp_server, llm, slack_url=None):
+    def __init__(self, mcp_server, llm, slack_url=None, file_path="SOP/sop.yaml"):
         self.server = mcp_server
         self.llm = llm
         self.slack = SlackNotifier(slack_url)
         self.is_running = False
+        self.sop_manager = SOPManager(file_path)
 
     def start_monitoring(self, interval=30):
         self.is_running = True
