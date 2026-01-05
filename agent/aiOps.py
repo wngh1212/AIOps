@@ -19,9 +19,6 @@ class ChatOpsClient:
         self.max_history = 5
 
     def _extract_flexible_intent(self, text):
-        """
-        LLM 출력에서 JSON 데이터만 정밀 추출합니다.
-        """
         try:
             match = re.search(r"(\{.*\})", text, re.DOTALL)
             if match:
@@ -41,9 +38,8 @@ class ChatOpsClient:
         return None, {}
 
     def _rule_based_routing(self, user_input):
-        """
-        인프라 상태를 변경하지 않는 조회 명령은 즉시 실행하여 Latency를 최소화
-        """
+        # 인프라 상태를 변경하지 않는 조회 명령은 즉시 실행하여 Latency를 최소화
+
         text = user_input.lower()
 
         if any(w in text for w in ["cpu", "metric", "utilization"]):
