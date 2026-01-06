@@ -9,8 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class DateRangeExtractor:
-    """Extract date ranges from natural language (English)"""
-
     @staticmethod
     def extract_date_range(text):
         now = datetime.now()
