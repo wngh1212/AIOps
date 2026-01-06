@@ -93,8 +93,8 @@ class MCPServer:
 
             ce_end = end_dt + timedelta(days=1)
 
-            # 3) End는 "다음 달 1일"을 넘어가면 안 됨 → 현재 달 기준 상한 설정
-            #    예: 오늘이 2026-01-05면 upper_bound = 2026-02-01
+            # End는 "다음 달 1일"을 넘어가면 안 됨 → 현재 달 기준 상한 설정
+            # 예: 오늘이 2026-01-05면 upper_bound = 2026-02-01
             upper_bound = datetime(today.year, today.month, 1) + timedelta(days=32)
             upper_bound = upper_bound.replace(day=1)  # 다음 달 1일
 
