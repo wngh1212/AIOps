@@ -13,6 +13,7 @@ from MCPServer.MCPserver import MCPServer
 
 load_dotenv()
 SLACK_WEBHOOK_URL = os.getenv("Slack_API_Key")
+use_model_name = "llama3.2:3b"
 
 
 def print_banner():
@@ -41,7 +42,7 @@ def print_banner():
     )
     print(f"   {GREEN}●{RESET} System Status : {GREEN}ONLINE{RESET}")
     print(
-        f"   {GREEN}●{RESET} LLM Engine    : {YELLOW}Llama2:7b(Model changeable){RESET}"
+        f"   {GREEN}●{RESET} LLM Engine    : {YELLOW}{use_model_name}(Model changeable){RESET}"
     )
     print(f"   {GREEN}●{RESET} MCP Server    : {CYAN}Active{RESET}")
     print(f"   {GREEN}●{RESET} Language Mode : {GREEN}English Native{RESET}")
@@ -59,14 +60,12 @@ def print_banner():
 def main():
     global monitoring_thread  # 전역 변수로 선언
     print_banner()
-
     print("\nInitializing Systems...", end="", flush=True)
     time.sleep(0.5)
     print("\rSystem Ready. Waiting for input.\n")
-
     try:
         server = MCPServer()
-        llm = OllamaLLM(model="llama2:7b")
+        llm = OllamaLLM(model=use_model_name)
 
         # Chat 클라이언트 초기화
         chat_client = ChatOpsClient(server, llm)
