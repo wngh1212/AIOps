@@ -30,10 +30,9 @@ class MonitorAgent:
             try:
                 self._run_scan()
             except Exception as e:
-                logger.error(f"스캔 오류: {e}", exc_info=True)
-                print(f"스캔 오류: {e}")
+                logger.error(f"scan error: {e}", exc_info=True)
+                print(f"scan error: {e}")
 
-            # 주기 대기 (기존 로직 유지)
             for _ in range(interval):
                 if not self.is_running:
                     break

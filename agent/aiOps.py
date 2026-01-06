@@ -53,7 +53,7 @@ class ChatOpsClient:
         self.llm = llm
         self.analysis_agent = AnalysisAgent(mcp_server, llm)
 
-        # 컨텍스트 메모리: 최근 작업 자원 ID 기억
+        # 컨텍스트 메모리 최근 작업 자원 ID 기억
         self.context_memory: Dict[str, Optional[str]] = {
             "vpc_id": None,
             "subnet_id": None,
