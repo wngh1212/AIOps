@@ -80,12 +80,10 @@ class MCPServer:
         try:
             logger.info(f"Fetching cost for {start_date} ~ {end_date}")
 
-            # 1) 문자열 → datetime
             start_dt = datetime.strptime(start_date, "%Y-%m-%d")
             end_dt = datetime.strptime(end_date, "%Y-%m-%d")
 
-            # 2) 사람이 말한 범위는 [start_dt, end_dt] (둘 다 inclusive)
-            #    Cost Explorer는 [Start, End) 이므로 End는 end_dt + 1일
+            # Cost Explorer는 [Start, End) 이므로 End는 end_dt + 1일
             ce_start = start_dt
 
             # 사용자가 end_date를 미래로 주면 현재 시점 기준으로 자르기
@@ -288,7 +286,6 @@ class MCPServer:
                     if state == "running":
                         cpu_val = self._get_cpu_metric(instance_id)
 
-                    # 개선된 포맷 monitor.py 정규식과 매칭
                     lines.append(
                         f"ID: {instance_id} | Name: {name} | State: {state} | CPU: {cpu_val}%"
                     )
@@ -388,7 +385,6 @@ class MCPServer:
                 return f"Instance '{instance_id}' not found"
 
             # CloudWatch Logs에서 인스턴스 관련 로그 조회
-            # 실제 환경에서는 로그 그룹 설정 필요
             logger.info(f"Fetching logs for {tid}")
             return f"Recent logs for {tid}: [샘플 로그 데이터]"
         except Exception as e:
@@ -396,7 +392,6 @@ class MCPServer:
             return f"Error fetching logs: {str(e)}"
 
     def execute_aws_action(self, args):
-        # 추가: 모니터링에서 액션 실행
         try:
             action_name = args.get("action_name")
             params = args.get("params", {})
