@@ -303,7 +303,7 @@ class MCPServer:
             start = now.replace(day=1).strftime("%Y-%m-%d")
             end = now.strftime("%Y-%m-%d")
             if start == end:
-                return "매월 1일은 집계 중"
+                return "The first day of each month is being counted"
             res = self.ce.get_cost_and_usage(
                 TimePeriod={"Start": start, "End": end},
                 Granularity="MONTHLY",

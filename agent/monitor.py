@@ -135,7 +135,7 @@ class MonitorAgent:
         # 분석 결과가 없으면 중단
         if not action:
             logger.info(f"AI decided no action needed for {name}")
-            print("AI가 대응 불필요 또는 판단 보류를 결정했습니다.")
+            print("AI has decided not to respond or withhold judgment.")
             return
 
         # 장애 전파
@@ -223,8 +223,8 @@ JSON format: {{"action": "ACTION_NAME", "root_cause": "summary", "reason": "logi
                 logger.info(f"[Text Analysis] Action extracted: {action}")
                 return (
                     action,
-                    "AI 텍스트 분석됨 (JSON 포맷 에러)",
-                    "텍스트 내 키워드 감지",
+                    "AI Text Analyzed (JSON Format Error)",
+                    "Detect keywords in text",
                 )
 
             logger.warning(f"[LLM Analysis] No action determined")

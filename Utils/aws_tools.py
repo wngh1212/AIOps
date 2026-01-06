@@ -105,12 +105,10 @@ class AWSTools:
 
     def get_recent_logs(self, instance_id, lines=50):
         """
-        [Real Data Integration]
-        실제 CloudWatch Logs에서 인스턴스 관련 로그 스트림을 조회합니다.
+        실제 CloudWatch Logs에서 인스턴스 관련 로그 스트림을 조회
         """
         try:
             # 인스턴스 ID를 포함하는 로그 그룹이나 스트림 검색
-            # 실제 환경에 맞춰 LogGroupName을 설정해야
             log_group = "/var/log/messages"
 
             response = self.logs.filter_log_events(
