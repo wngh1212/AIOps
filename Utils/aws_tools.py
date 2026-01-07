@@ -9,16 +9,23 @@ import boto3
 class AWSTools:
     def __init__(self, region="ap-northeast-2"):
         self.region = region
+        self._initialize_clients()
 
-        # 자주 쓰는 클라이언트 미리 로드
-        self.ec2 = boto3.client("ec2", region_name=region)
-        self.cw = boto3.client("cloudwatch", region_name=region)
-        self.logs = boto3.client("logs", region_name=region)
-        self.rds = boto3.client("rds", region_name=region)
-        self.s3 = boto3.client("s3", region_name=region)
+    def _initialize_clients(self):
+        """AWS 클라이언트 초기화"""
+        self.ec2 = boto3.client("ec2", region_name=self.region)
+        self.cw = boto3.client("cloudwatch", region_name=self.region)
+        self.logs = boto3.client("logs", region_name=self.region)
+        self.rds = boto3.client("rds", region_name=self.region)
+        self.s3 = boto3.client("s3", region_name=self.region)
+        self.ec2_res = boto3.resource("ec2", region_name=self.region)
 
-        # 리소스 객체
-        self.ec2_res = boto3.resource("ec2", region_name=region)
+    def change_region(self, new_region):
+        """AWS 리전 변경"""
+        if new_region == self.region:
+            return
+        self.region = new_region
+        self._initialize_clients()  # 클라이언트 재초기화
 
     def execute_python_code(self, code_str):
         """

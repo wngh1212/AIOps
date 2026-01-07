@@ -9,13 +9,31 @@ logger = logging.getLogger(__name__)
 
 
 class MCPServer:
-    def __init__(self):
-        self.region = "ap-northeast-2"
+    def __init__(self, region="ap-northeast-2"):
+        self.region = region
+        self._initialize_clients()
+        logger.info("MCPServer initialized")
+
+    def _initialize_clients(self):
         self.ec2 = boto3.client("ec2", region_name=self.region)
         self.cw = boto3.client("cloudwatch", region_name=self.region)
         self.ssm = boto3.client("ssm", region_name=self.region)
         self.ce = boto3.client("ce", region_name=self.region)
-        logger.info("MCPServer initialized")
+
+    def change_region(self, new_region):
+        # AWS 리전 변경
+        if new_region == self.region:
+            return
+
+        old_region = self.region
+        self.region = new_region
+
+        try:
+            self._initialize_clients()
+        except Exception as e:
+            self.region = old_region
+            self._initialize_clients()
+            raise
 
     def _clean_str(self, text):
         if not text:
@@ -212,7 +230,7 @@ class MCPServer:
         )
 
     def _get_id_or_name(self, args: dict):
-        """ID 혹은 Name 파라미터 추출 헬퍼"""
+        # ID 혹은 Name 파라미터 추출
         return args.get("instance_id") or args.get("name")
 
     def create_vpc(self, cidr):
@@ -265,7 +283,6 @@ class MCPServer:
         return {"status": "success", "resource_id": instance_id, "type": "instance"}
 
     def list_instances(self, status="all"):
-        """인스턴스 목록 조회 (CPU 메트릭 포함)"""
         try:
             filters = (
                 []

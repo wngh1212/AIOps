@@ -159,7 +159,7 @@ class MonitorAgent:
         print(f"조치 완료: {result_msg}")
 
     def _analyze_with_llm(self, name, trigger, logs):
-        """SOP 검색 + LLM 분석"""
+        # SOP 검색 + LLM 분석
         try:
             # YAML 기반 SOP 검색
             related_sops = self.sop_manager.search_guideline(
