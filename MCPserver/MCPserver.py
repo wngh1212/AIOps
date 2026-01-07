@@ -1,7 +1,6 @@
 import logging
 import time
 from datetime import datetime, timedelta, timezone
-from re import I
 
 import boto3
 
@@ -170,7 +169,6 @@ class MCPServer:
 
     def call_tool(self, tool_name: str, args: dict):
         logger.debug(f"[MCP Execution] Tool: {tool_name} | Args: {args}")
-
         # 도구 이름과 실행 로직을 매핑 (매핑 테이블)
         tool_mapping = {
             "create_vpc": lambda: self.create_vpc(args.get("cidr")),
