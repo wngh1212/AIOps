@@ -13,7 +13,7 @@ class ChatOpsClient:
     # 인스턴스 ID 정규식 (i-로 시작하는 17자리 혹은 그 이상)
     INSTANCE_ID_PATTERN = re.compile(r"(i-[a-z0-9]+)")
 
-    # 인스턴스 타입 정규식 (예: t2.micro)
+    # 인스턴스 타입 정규식
     INSTANCE_TYPE_PATTERN = re.compile(r"\b[tcmr][1-7][a-z]*\.[a-z]+\b")
 
     # 자연어 처리 시 제거할 불용어 목록
