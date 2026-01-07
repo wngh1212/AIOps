@@ -62,7 +62,7 @@ def print_banner(current_region):
     )
     print(f"   {GREEN}●{RESET} MCP Server    : {CYAN}Active{RESET}")
     print(f"   {GREEN}●{RESET} Language Mode : {GREEN}English Native{RESET}")
-    print(f" {GREEN}●{RESET} AWS Region : {YELLOW}{current_region}{RESET}")
+    print(f"   {GREEN}●{RESET} AWS Region    : {YELLOW}{current_region}{RESET}")
 
     print(
         f"{DIM}   ------------------------------------------------------------{RESET}"

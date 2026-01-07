@@ -190,8 +190,6 @@ class MCPServer:
             "resize_instance": lambda: self.resize_instance(
                 args.get("instance_id"), args.get("instance_type") or args.get("name")
             ),
-            "start_instance": lambda: self.start_instance(self._get_id_or_name(args)),
-            "stop_instance": lambda: self.stop_instance(self._get_id_or_name(args)),
             "delete_resource": lambda: self.delete_resource(self._get_id_or_name(args)),
             "get_recent_logs": lambda: self.get_recent_logs(args.get("id")),
             "execute_aws_action": lambda: self.execute_aws_action(args),
@@ -383,23 +381,7 @@ class MCPServer:
             logger.error(f"Failed to generate topology: {e}")
         return "\n".join(lines)
 
-    def start_instance(self, identifier):
-        tid = self._resolve_id(identifier)
-        if not tid:
-            return f"Target '{identifier}' not found."
-        self.ec2.start_instances(InstanceIds=[tid])
-        logger.info(f"Started instance {identifier} ({tid})")
-        return f"Starting instance {identifier} ({tid})..."
-
-    def stop_instance(self, identifier):
-        tid = self._resolve_id(identifier)
-        if not tid:
-            return f"Target '{identifier}' not found."
-        self.ec2.stop_instances(InstanceIds=[tid])
-        logger.info(f"Stopped instance {identifier} ({tid})")
-        return f"Stopping instance {identifier} ({tid})..."
-
-    def delete_resource(self, identifier):
+    def terminate_resource(self, identifier):
         tid = self._resolve_id(identifier)
         if not tid:
             return f"Target '{identifier}' not found."
@@ -426,20 +408,37 @@ class MCPServer:
             action_name = args.get("action_name")
             params = args.get("params", {})
             instance_ids = params.get("InstanceIds", [])
+            auto_resolve = args.get("auto_resolve_names", False)
+
+            if auto_resolve:
+                resolved_ids = []
+                for id_or_name in instance_ids:
+                    tid = self._resolve_id(id_or_name)
+                    if tid:
+                        resolved_ids.append(tid)
+                        instance_ids = resolved_ids
+
+            if not instance_ids:
+                return "Error: No valid instance IDs provided"
 
             logger.info(f"Executing AWS action: {action_name} on {instance_ids}")
 
+            # 액션 실행
             if action_name == "start_instances":
                 self.ec2.start_instances(InstanceIds=instance_ids)
                 return f"Started instances: {instance_ids}"
-            elif action_name == "reboot_instances":
-                self.ec2.reboot_instances(InstanceIds=instance_ids)
-                return f"Rebooted instances: {instance_ids}"
+
             elif action_name == "stop_instances":
                 self.ec2.stop_instances(InstanceIds=instance_ids)
                 return f"Stopped instances: {instance_ids}"
+
+            elif action_name == "reboot_instances":
+                self.ec2.reboot_instances(InstanceIds=instance_ids)
+                return f"Rebooted instances: {instance_ids}"
+
             else:
                 return f"Unknown action: {action_name}"
+
         except Exception as e:
             logger.error(f"AWS action failed: {e}")
             return f"Error executing action: {str(e)}"

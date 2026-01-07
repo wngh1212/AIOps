@@ -8,7 +8,7 @@ from agent.analysis import AnalysisAgent
 
 class ChatOpsClient:
     # 안전 검사가 필요한 중요 작업 목록
-    CRITICAL_TOOLS = {"stop_instance", "delete_resource", "resize_instance"}
+    CRITICAL_TOOLS = {"delete_resource", "resize_instance"}
 
     # 인스턴스 ID 정규식 (i-로 시작하는 17자리 혹은 그 이상)
     INSTANCE_ID_PATTERN = re.compile(r"(i-[a-z0-9]+)")
@@ -229,9 +229,8 @@ You are an AWS Operations Agent. Analyze the user request and respond ONLY in JS
 
 Available Tools:
 - create_instance: Launch a new EC2 instance (args: name, instance_type)
-- start_instance: Start a stopped instance (args: instance_id)
-- stop_instance: Stop a running instance (args: instance_id)
-- delete_resource: Terminate an instance (args: instance_id)
+- terminate_resource: Terminate an instance (args: instance_id)
+- execute_aws_action: Execute AWS EC2 actions (args: action_name, params)
 - resize_instance: Change instance type (args: instance_id, instance_type)
 - list_instances: Show all instances (args: status='all')
 - get_cost: Get monthly cost
@@ -247,7 +246,8 @@ Format:
 Examples:
 - "Launch a t2.micro" -> {{"tool": "create_instance", "args": {{"instance_type": "t2.micro"}}}}
 - "Show cost" -> {{"tool": "get_cost", "args": {{}}}}
-- "Stop web-server" -> {{"tool": "stop_instance", "args": {{"instance_id": "web-server"}}}}
+- "Start web-server" -> {{"tool": "execute_aws_action", "args": {{"action_name": "start_instances", "params": {{"InstanceIds": ["web-server"]}}, "auto_resolve_names": true}}}}
+- "Stop web-server" -> {{"tool": "execute_aws_action", "args": {{"action_name": "stop_instances", "params": {{"InstanceIds": ["web-server"]}}, "auto_resolve_names": true}}}}
 <>
 User: {user_input}
 [/INST]"""
