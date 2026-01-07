@@ -1,6 +1,7 @@
 import logging
 import time
 from datetime import datetime, timedelta, timezone
+from re import I
 
 import boto3
 
@@ -94,7 +95,7 @@ class MCPServer:
             ce_end = end_dt + timedelta(days=1)
 
             # End는 "다음 달 1일"을 넘어가면 안 됨 → 현재 달 기준 상한 설정
-            # 예: 오늘이 2026-01-05면 upper_bound = 2026-02-01
+            # 오늘이 2026-01-05면 upper_bound = 2026-02-01
             upper_bound = datetime(today.year, today.month, 1) + timedelta(days=32)
             upper_bound = upper_bound.replace(day=1)  # 다음 달 1일
 
@@ -149,68 +150,70 @@ class MCPServer:
             logger.warning(f"Failed to get CPU metric for {instance_id}: {e}")
             return 0.0
 
-    def call_tool(self, tool_name, args):
+    def call_tool(self, tool_name: str, args: dict):
         logger.debug(f"[MCP Execution] Tool: {tool_name} | Args: {args}")
 
+        # 도구 이름과 실행 로직을 매핑 (매핑 테이블)
+        tool_mapping = {
+            "create_vpc": lambda: self.create_vpc(args.get("cidr")),
+            "create_subnet": lambda: self.create_subnet(
+                args.get("vpc_id"), args.get("cidr")
+            ),
+            "create_instance": lambda: self._handle_create_instance(
+                args
+            ),  # 복잡한 로직 분리
+            "list_instances": lambda: self.list_instances(args.get("status", "all")),
+            "get_cost": lambda: self.get_cost(),
+            "generate_topology": lambda: self.generate_topology(),
+            "get_metric": lambda: self.get_metric(
+                args.get("instance_id"), args.get("metric_name", "CPUUtilization")
+            ),
+            "create_snapshot": lambda: self.create_snapshot(self._get_id_or_name(args)),
+            "resize_instance": lambda: self.resize_instance(
+                args.get("instance_id"), args.get("instance_type") or args.get("name")
+            ),
+            "start_instance": lambda: self.start_instance(self._get_id_or_name(args)),
+            "stop_instance": lambda: self.stop_instance(self._get_id_or_name(args)),
+            "delete_resource": lambda: self.delete_resource(self._get_id_or_name(args)),
+            "get_recent_logs": lambda: self.get_recent_logs(args.get("id")),
+            "execute_aws_action": lambda: self.execute_aws_action(args),
+        }
+
+        handler = tool_mapping.get(tool_name)
+
+        if not handler:
+            logger.warning(f"Unknown tool: {tool_name}")
+            return f"Error: Unknown tool {tool_name}"
+
         try:
-            if tool_name == "create_vpc":
-                return self.create_vpc(args.get("cidr"))
-            elif tool_name == "create_subnet":
-                return self.create_subnet(args.get("vpc_id"), args.get("cidr"))
-
-            elif tool_name == "create_instance":
-                img = self._clean_str(args.get("image_id"))
-                if not img or not img.startswith("ami-"):
-                    logger.info("Validating AMI ID...")
-                    img = self._get_latest_ami()
-
-                sub_id = args.get("subnet_id")
-                if not sub_id:
-                    sub_id = self._get_default_subnet()
-                    if not sub_id:
-                        return "Error: No Subnet provided and failed to auto-detect one in ap-northeast-2a."
-
-                return self.create_instance(
-                    img,
-                    args.get("instance_type", "t2.nano"),
-                    sub_id,
-                    args.get("sg_id"),
-                    self._clean_str(args.get("name", "new-instance")),
-                )
-
-            elif tool_name == "list_instances":
-                return self.list_instances(args.get("status", "all"))
-            elif tool_name == "get_cost":
-                return self.get_cost()
-            elif tool_name == "generate_topology":
-                return self.generate_topology()
-            elif tool_name == "get_metric":
-                return self.get_metric(
-                    args.get("instance_id"), args.get("metric_name", "CPUUtilization")
-                )
-            elif tool_name == "create_snapshot":
-                return self.create_snapshot(args.get("instance_id"))
-            elif tool_name == "resize_instance":
-                return self.resize_instance(
-                    args.get("instance_id"), args.get("instance_type")
-                )
-            elif tool_name == "start_instance":
-                return self.start_instance(args.get("instance_id") or args.get("name"))
-            elif tool_name == "stop_instance":
-                return self.stop_instance(args.get("instance_id") or args.get("name"))
-            elif tool_name == "delete_resource":
-                return self.delete_resource(args.get("instance_id") or args.get("name"))
-            elif tool_name == "get_recent_logs":
-                # 모니터링에 필요한 메서드
-                return self.get_recent_logs(args.get("id"))
-            elif tool_name == "execute_aws_action":
-                return self.execute_aws_action(args)
-            else:
-                logger.warning(f"Unknown tool: {tool_name}")
-                return f"Error: Unknown tool {tool_name}"
+            return handler()
         except Exception as e:
             logger.error(f"Tool execution error: {e}", exc_info=True)
             return f"System Error: {str(e)}"
+
+    def _handle_create_instance(self, args: dict):
+        img = self._clean_str(args.get("image_id"))
+        if not img or not img.startswith("ami-"):
+            logger.info("Validating AMI ID...")
+            img = self._get_latest_ami()
+
+        sub_id = args.get("subnet_id")
+        if not sub_id:
+            sub_id = self._get_default_subnet()
+            if not sub_id:
+                return "Error: No Subnet provided and failed to auto-detect one in ap-northeast-2a."
+
+        return self.create_instance(
+            image_id=img,
+            instance_type=args.get("instance_type", "t2.nano"),
+            subnet_id=sub_id,
+            sg_id=args.get("sg_id"),
+            name=self._clean_str(args.get("name", "new-instance")),
+        )
+
+    def _get_id_or_name(self, args: dict):
+        """ID 혹은 Name 파라미터 추출 헬퍼"""
+        return args.get("instance_id") or args.get("name")
 
     def create_vpc(self, cidr):
         if not cidr:
@@ -338,9 +341,19 @@ class MCPServer:
     def resize_instance(self, identifier, new_type):
         tid = self._resolve_id(identifier)
         if not tid:
-            return f"Target '{identifier}' not found."
-        logger.info(f"Resizing {identifier} ({tid}) to {new_type}")
-        return f"Resized {identifier} ({tid}) to {new_type}"
+            return f"target {identifier} not found"
+        try:
+            response = self.ec2.describe_instances(InstanceIds=[tid])
+            state = response["Reservations"][0]["Instances"][0]["State"]["Name"]
+            if state != "stopped":
+                return f"Error : Instance must be stopped to resize. Current state: {state}"
+            self.ec2.modify_instance_attribute(
+                InstanceId=tid, InstanceType={"Value": new_type}
+            )
+            return f"Successfully resized {identifier} ({tid}) to {new_type}"
+
+        except Exception as e:
+            return f"Error resizing instance: {str(e)}"
 
     def generate_topology(self):
         lines = ["Topology:"]
