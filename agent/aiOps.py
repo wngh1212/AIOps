@@ -8,7 +8,7 @@ from agent.analysis import AnalysisAgent
 
 class ChatOpsClient:
     # 안전 검사가 필요한 중요 작업 목록
-    CRITICAL_TOOLS = {"delete_resource", "resize_instance"}
+    CRITICAL_TOOLS = {"terminate_resource", "resize_instance"}
 
     # 인스턴스 ID 정규식 (i-로 시작하는 17자리 혹은 그 이상)
     INSTANCE_ID_PATTERN = re.compile(r"(i-[a-z0-9]+)")
@@ -237,7 +237,7 @@ Available Tools:
 - get_metric: Get instance metrics (args: instance_id)
 - generate_topology: Show VPC topology
 - create_vpc: Create a new VPC
-- create_subnet: Create a subnet
+- create_subnet: Create a subnet in VPC (args: vpc_id, cidr)
 - create_snapshot: Create a snapshot
 
 Format:

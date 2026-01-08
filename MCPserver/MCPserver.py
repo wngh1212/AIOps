@@ -1,3 +1,5 @@
+# 맨 위에
+import ipaddress
 import logging
 import time
 from datetime import datetime, timedelta, timezone
@@ -173,7 +175,8 @@ class MCPServer:
         tool_mapping = {
             "create_vpc": lambda: self.create_vpc(args.get("cidr")),
             "create_subnet": lambda: self.create_subnet(
-                args.get("vpc_id"), args.get("cidr")
+                args.get("vpc_id"),
+                args.get("cidr") or args.get("cidr_block"),
             ),
             "create_instance": lambda: self._handle_create_instance(
                 args
@@ -188,7 +191,9 @@ class MCPServer:
             "resize_instance": lambda: self.resize_instance(
                 args.get("instance_id"), args.get("instance_type") or args.get("name")
             ),
-            "delete_resource": lambda: self.delete_resource(self._get_id_or_name(args)),
+            "terminate_resource": lambda: self.terminate_resource(
+                self._get_id_or_name(args)
+            ),
             "get_recent_logs": lambda: self.get_recent_logs(args.get("id")),
             "execute_aws_action": lambda: self.execute_aws_action(args),
         }
@@ -240,18 +245,40 @@ class MCPServer:
         logger.info(f"VPC created: {vpc_id}")
         return {"status": "success", "resource_id": vpc_id, "type": "vpc"}
 
-    def create_subnet(self, vpc_id, cidr):
+    def create_subnet(self, vpc_id, cidr, az=None):
         if not vpc_id:
             return "Error: VPC ID missing"
-        res = self.ec2.create_subnet(
-            VpcId=vpc_id, CidrBlock=cidr, AvailabilityZone="ap-northeast-2a"
-        )
-        logger.info(f"Subnet created: {res['Subnet']['SubnetId']}")
-        return {
-            "status": "success",
-            "resource_id": res["Subnet"]["SubnetId"],
-            "type": "subnet",
-        }
+        if not cidr:
+            return "Error: CIDR block missing"
+
+        # AZ 선택
+        if not az:
+            try:
+                vpc_info = self.ec2.describe_vpcs(VpcIds=[vpc_id])
+                if vpc_info["Vpcs"]:
+                    azs = vpc_info["Vpcs"][0].get(
+                        "AvailabilityZones", ["ap-northeast-2a"]
+                    )
+                    az = azs[0]
+                else:
+                    az = "ap-northeast-2a"
+            except:
+                az = "ap-northeast-2a"
+
+        try:
+            logger.info(f"Creating subnet: VPC={vpc_id}, CIDR={cidr}, AZ={az}")
+            res = self.ec2.create_subnet(
+                VpcId=vpc_id, CidrBlock=cidr, AvailabilityZone=az
+            )
+            subnet_id = res["Subnet"]["SubnetId"]
+            return {
+                "status": "success",
+                "resource_id": subnet_id,
+                "type": "subnet",
+                "az": az,
+            }
+        except Exception as e:
+            return f"Error: {str(e)}"
 
     def create_instance(self, image_id, instance_type, subnet_id, sg_id, name):
         image_id = self._clean_str(image_id)
