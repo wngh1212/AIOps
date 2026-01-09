@@ -167,14 +167,14 @@ class ChatOpsClient:
             if type_match:
                 args["instance_type"] = type_match.group(0)
 
-        # ID나 이름이 여전히 없고, ID 패턴도 발견되지 않은 경우
+        # ID나 이름이 여전히 없고 ID 패턴도 발견되지 않은 경우
         if not args.get("instance_id") and not args.get("name"):
             val = self._clean_text_for_extraction(text)
             if val:
                 if tool == "create_instance":
                     args["name"] = val
                 else:
-                    # create가 아니면 남은 단어를 ID로 간주할 수도 있으나 신중해야 함
+                    # create가 아니면 남은 단어를 ID로 간주할 수도 있어서 신중해야 함
                     pass
 
         # 문맥 메모리 활용
