@@ -74,13 +74,32 @@ class LLMPerformanceMeter:
         """
 
         if not system_prompt:
-            system_prompt = """You are an AWS operations assistant.
-Analyze the user request and return ONLY a JSON object with:
-- "tool": AWS tool name (list_instances, start_instance, stop_instance, get_cost, etc)
-- "args": JSON object with parameters
-- "reason": brief explanation
+            system_prompt = """[INST] <>
+You are an AWS Operations Agent. Analyze the user request and respond ONLY in JSON format.
 
-Return ONLY valid JSON."""
+Available Tools:
+- create_instance: Launch a new EC2 instance (args: name, instance_type)
+- terminate_resource: Terminate an instance (args: instance_id)
+- execute_aws_action: Execute AWS EC2 actions (args: action_name, params)
+- resize_instance: Change instance type (args: instance_id, instance_type)
+- list_instances: Show all instances (args: status='all')
+- get_cost: Get monthly cost
+- get_metric: Get instance metrics (args: instance_id)
+- generate_topology: Show VPC topology
+- create_vpc: Create a new VPC
+- create_subnet: Create a subnet in VPC (args: vpc_id, cidr)
+- create_snapshot: Create a snapshot
+
+Format:
+{{"tool": "tool_name", "args": {{key: value}}}}
+
+Examples:
+- "Launch a t2.micro" -> {{"tool": "create_instance", "args": {{"instance_type": "t2.micro"}}}}
+- "Show cost" -> {{"tool": "get_cost", "args": {{}}}}
+- "Start web-server" -> {{"tool": "execute_aws_action", "args": {{"action_name": "start_instances", "params": {{"InstanceIds": ["web-server"]}}, "auto_resolve_names": true}}}}
+- "Stop web-server" -> {{"tool": "execute_aws_action", "args": {{"action_name": "stop_instances", "params": {{"InstanceIds": ["web-server"]}}, "auto_resolve_names": true}}}}
+<>
+[/INST]"""
 
         # 빈 프롬프트 처리
         if not prompt or not prompt.strip():

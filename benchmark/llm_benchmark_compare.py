@@ -23,7 +23,6 @@ except ImportError:
 
 
 class LLMBenchmarkAnalyzer:
-    """LLM 벤치마크 분석"""
 
     def __init__(self, results_dir: str = "./benchmark_results"):
         self.results_dir = Path(results_dir)
@@ -40,7 +39,7 @@ class LLMBenchmarkAnalyzer:
             print("matplotlib 필요하거나 모델 부족")
             return
 
-        # ✅ reports.keys() 직접 사용 (일관성 보장)
+ 
         models = [m.replace("_", ":") for m in self.reports.keys()]
         accuracies = [
             self.reports[m].get("tool_accuracy", 0) for m in self.reports.keys()
@@ -78,10 +77,10 @@ class LLMBenchmarkAnalyzer:
                 / f"llm_comparison_{datetime.now().strftime('%Y-%m-%d')}.png"
             )
             plt.savefig(output_file, dpi=150)
-            print(f"✓ 차트 저장: {output_file}")
+            print(f"차트 저장: {output_file}")
 
     def _load_all_results(self):
-        """모든 결과 로드"""
+      
         print(f"\n로드 중: {self.results_dir}\n")
 
         for json_file in self.json_files:
@@ -106,9 +105,9 @@ class LLMBenchmarkAnalyzer:
                     model = "unknown"
 
                 self.data[model] = df
-                print(f"✓ {csv_file.name} ({len(df)} 테스트)")
+                print(f"{csv_file.name} ({len(df)} 테스트)")
             except Exception as e:
-                print(f"✗ {csv_file.name}: {e}")
+                print(f"{csv_file.name}: {e}")
 
     def print_summary(self):
         """전체 요약 출력"""
@@ -150,7 +149,7 @@ class LLMBenchmarkAnalyzer:
             model_name = model_display.replace("_", ":")
 
             print(f"\n{'=' * 90}")
-            print(f"📊 {model_name}")
+            print(f"{model_name}")
             print(f"{'=' * 90}\n")
 
             print(f"총 테스트: {report.get('total_tests')}")
@@ -204,7 +203,7 @@ class LLMBenchmarkAnalyzer:
             return
 
         print(f"\n{'=' * 90}")
-        print(f"🏆 모델 성능 순위")
+        print(f"모델 성능 순위")
         print(f"{'=' * 90}\n")
 
         # 도구 정확도 순위
@@ -281,7 +280,7 @@ class LLMBenchmarkAnalyzer:
             / f"model_comparison_{datetime.now().strftime('%Y-%m-%d')}.csv"
         )
         df_comparison.to_csv(output_file, index=False, encoding="utf-8")
-        print(f"\n✓ 저장: {output_file}\n")
+        print(f"\n저장: {output_file}\n")
 
         def plot_comparison(self):
             """비교 차트 생성"""
@@ -289,7 +288,7 @@ class LLMBenchmarkAnalyzer:
                 print("matplotlib 필요하거나 모델 부족")
                 return
 
-            # reports.keys()를 직접 사용 (일관성 보장)
+            # reports.keys()를 직접 사용
             models = [m.replace("_", ":") for m in self.reports.keys()]
             accuracies = [
                 self.reports[m].get("tool_accuracy", 0) for m in self.reports.keys()
@@ -327,7 +326,7 @@ class LLMBenchmarkAnalyzer:
                 / f"llm_comparison_{datetime.now().strftime('%Y-%m-%d')}.png"
             )
             plt.savefig(output_file, dpi=150)
-            print(f"✓ 차트 저장: {output_file}")
+            print(f"차트 저장: {output_file}")
 
     def generate_report(self):
         """최종 분석 리포트"""

@@ -1,0 +1,19 @@
+{
+  "test_date": "2026-01-10",
+  "model": "deepseek-v2:lite",
+  "total_tests": 50,
+  "tool_accuracy": 18.0,
+  "json_valid_rate": 100.0,
+  "total_requests": 50,
+  "success_count": 50,
+  "fail_count": 0,
+  "success_rate": 100.0,
+  "avg_latency_ms": 2374.1733639998165,
+  "median_latency_ms": 2342.6715999999033,
+  "min_latency_ms": 2236.28109999936,
+  "max_latency_ms": 2705.9278999995513,
+  "p95_latency_ms": 2606.8769999992583,
+  "p99_latency_ms": 2705.9278999995513,
+  "std_dev_ms": 103.85471532018427,
+  "timestamp": "2026-01-10T19:47:41.197020"
+}
