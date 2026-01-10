@@ -1,6 +1,7 @@
 # AIOps: AWS Autonomous Operations Agent
 
-본 프로젝트는 LLM의 추론 능력과 엔지니어의 통제권을 결합한 **'지능형 Assisted Ops'** 시스템을 지향합니다. AWS 클라우드 인프라를 자연어로 관리하고 장애 발생 시 SOP에 기반하여 최적의 복구 액션을 제안 및 실행
+본 프로젝트는 LLM의 추론 능력과 엔지니어의 통제권을 결합한 지능형 Assisted Ops 시스템을 구현하기 위한 프로젝트 입니다\n
+AWS 클라우드 인프라를 자연어로 관리하고 장애 발생 시 SOP에 기반하여 최적의 복구 액션을 제안 및 실행할 수 있는 기능을 가지고 있습니다
 <img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/e32b4fa4-77ae-42ff-ae0d-1f49aef4fcc9" />
 
 ## SRE Principle
@@ -32,7 +33,7 @@
 
 * **자연어 명령 처리**: "웹 서버 시작해줘"와 같은 명령을 인식하여 `start_instances` 도구를 호출
 * **리소스 자동 식별**: 인스턴스 ID를 직접 입력하지 않아도 'Name' 태그를 기반으로 대상을 추론하여 식별
-**English Native Mode**: 추론 속도와 정확도 극대화를 위해 내부적으로는 BPE 효율이 높은 영어 기반 추론을 수행
+* *English Native**: 추론 속도와 정확도 극대화를 위해 내부적으로는 BPE 효율이 높은 영어 기반 추론을 수행
 
 
 
@@ -51,7 +52,7 @@
 ## 기술
 
 * **Language**: Python 3.x
-* **LLM**: Llama2:7b (via Ollama)
+* **LLM**: Llama
 * **Cloud API**: AWS Boto3 (EC2, CloudWatch, Logs, CE)
 * **Database**: ChromaDB (Vector Storage for SOP)
 * **Framework**: LangChain Ollama
