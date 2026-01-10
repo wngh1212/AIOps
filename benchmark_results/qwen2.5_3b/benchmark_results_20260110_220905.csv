@@ -1,0 +1,94 @@
+test_id,category,prompt,expected_tool,extracted_tool,tool_correct,expected_args,extracted_args,args_correct,json_valid,latency_ms,tokens_per_sec,response_length,timestamp
+test_001,instance,Launch a t2.micro instance,create_instance,create_instance,True,['instance_type'],['instance_type'],True,True,2475.0284000001557,105.30267410875766,66,2026-01-10T22:05:16.081066
+test_002,instance,Create a new instance named web-server with t2.small,create_instance,create_instance,True,"['name', 'instance_type']","['name', 'instance_type']",True,True,2426.5144999999393,116.71481513021698,88,2026-01-10T22:05:18.508420
+test_003,instance,Make an instance for production,create_instance,create_instance,True,['name'],"['instance_type', 'name']",True,True,2427.1018999997978,115.9472511359486,89,2026-01-10T22:05:20.935987
+test_004,instance,Show all instances,list_instances,list_instances,True,[],None,True,True,2276.9069000000854,123.72974758179726,38,2026-01-10T22:05:23.213324
+test_005,instance,List running instances,list_instances,list_instances,True,[],['status'],True,True,2350.4798999997547,112.90947117852913,57,2026-01-10T22:05:25.564235
+test_006,instance,Terminate i-0123456789abcdef,terminate_resource,terminate_resource,True,['instance_id'],['instance_id'],True,True,2465.0652999998783,114.83077771058052,77,2026-01-10T22:05:28.029787
+test_007,instance,Delete the web-server instance,terminate_resource,terminate_resource,True,['name'],['instance_id'],False,True,2390.8030000002327,110.5728605315412,69,2026-01-10T22:05:30.421068
+test_008,instance,Resize i-0123456789abcdef to t2.large,resize_instance,resize_instance,True,"['instance_id', 'instance_type']","['instance_id', 'instance_type']",True,True,2544.792900000175,117.91133672152063,103,2026-01-10T22:05:32.966305
+test_009,instance,Change instance type of my-server to t3.xlarge,resize_instance,resize_instance,True,"['name', 'instance_type']","['instance_id', 'instance_type']",True,True,2529.7780000000785,108.83524520580744,95,2026-01-10T22:05:35.496557
+test_010,instance,Start web-server,execute_aws_action,create_instance,False,['action_name'],['name'],False,True,2356.4903000001323,116.7151683032727,59,2026-01-10T22:05:37.853562
+test_011,instance,Stop the database instance,execute_aws_action,terminate_resource,False,['action_name'],['instance_id'],False,True,2423.97179999989,120.85476120053303,76,2026-01-10T22:05:40.277986
+test_012,instance,Reboot i-abcd1234,execute_aws_action,execute_aws_action,True,['action_name'],"['action_name', 'params', 'auto_resolve_names']",True,True,2620.4953000001296,116.33308996113716,146,2026-01-10T22:05:42.898952
+test_013,instance,Create a snapshot of i-0123456789abcdef,create_snapshot,create_snapshot,True,['instance_id'],['instance_id'],True,True,2469.4217000001117,116.06875139040692,74,2026-01-10T22:05:45.368832
+test_014,instance,Backup my-app-server,create_snapshot,create_snapshot,True,['name'],['volume_id'],False,True,2372.965299999578,117.95334102838464,71,2026-01-10T22:05:47.742355
+test_015,instance,Terminate resource i-xyz123,terminate_resource,terminate_resource,True,['instance_id'],['instance_id'],True,True,2399.587200000042,120.51481834487045,67,2026-01-10T22:05:50.142367
+test_016,network,Create a VPC with CIDR 10.0.0.0/16,create_vpc,create_vpc,True,['cidr'],['cidr'],True,True,2474.3626999998014,109.06409094892153,55,2026-01-10T22:05:52.617455
+test_017,network,Create a new VPC,create_vpc,create_vpc,True,[],None,True,True,2299.2755000000216,124.28580052484118,34,2026-01-10T22:05:54.917256
+test_018,network,Create a subnet in vpc-12345678 with CIDR 10.0.1.0/24,create_subnet,create_subnet,True,"['vpc_id', 'cidr']","['vpc_id', 'cidr']",True,True,2632.2574999999233,119.367043278338,84,2026-01-10T22:05:57.551407
+test_019,network,Add a subnet to my VPC,create_subnet,create_subnet,True,[],"['vpc_id', 'cidr']",True,True,2673.760499999844,119.83705994633216,93,2026-01-10T22:06:00.225601
+test_020,network,Show network topology,generate_topology,generate_topology,True,[],None,True,True,2300.9164000000055,129.8497638232565,41,2026-01-10T22:06:02.526966
+test_021,network,Generate VPC topology,generate_topology,generate_topology,True,[],None,True,True,2293.1368999998085,130.3241160766827,41,2026-01-10T22:06:06.821173
+test_022,network,Display the infrastructure layout,generate_topology,generate_topology,True,[],None,True,True,2314.3064000000777,129.84431666431948,41,2026-01-10T22:06:09.135897
+test_023,network,Create VPC with name production-vpc,create_vpc,create_vpc,True,[],['name'],True,True,2364.4045000000915,123.2783409200879,58,2026-01-10T22:06:11.500710
+test_024,network,Set up subnet in default VPC,create_subnet,create_subnet,True,[],"['vpc_id', 'cidr']",True,True,2574.1565999996965,115.71771178510964,79,2026-01-10T22:06:14.075379
+test_025,network,What is the network structure,generate_topology,generate_topology,True,[],None,True,True,2329.215600000225,112.3998668493885,41,2026-01-10T22:06:16.405286
+test_026,network,Create CIDR 172.16.0.0/16 VPC,create_vpc,create_vpc,True,['cidr'],['cidr'],True,True,2489.104100000077,116.48775150081316,57,2026-01-10T22:06:18.894898
+test_027,network,Make subnet 172.16.0.0/24 in vpc-abc,create_subnet,create_subnet,True,"['vpc_id', 'cidr']","['vpc_id', 'cidr']",True,True,2573.4732000000804,119.7450889910454,81,2026-01-10T22:06:21.469231
+test_028,monitoring,What is the CPU usage of i-0123456789abcdef,get_metric,get_metric,True,['instance_id'],['instance_id'],True,True,2457.9436000003625,119.67882989210158,69,2026-01-10T22:06:23.927819
+test_029,monitoring,Get CPU utilization for my-server,get_metric,get_metric,True,['name'],['instance_id'],False,True,2358.687800000098,118.82879834690378,60,2026-01-10T22:06:26.286973
+test_030,monitoring,Check memory usage,get_metric,get_metric,True,[],['instance_id'],True,True,2359.1386999996757,117.54521342062102,51,2026-01-10T22:06:28.646605
+test_031,monitoring,Show metrics for i-abc123,get_metric,get_metric,True,['instance_id'],['instance_id'],True,True,2401.2588000000505,121.5625545049497,59,2026-01-10T22:06:31.048283
+test_032,monitoring,Monitor web-server performance,get_metric,analyze_resource_usage,False,['name'],None,False,True,2314.3332999998165,119.79747381355577,46,2026-01-10T22:06:33.363092
+test_033,monitoring,Instance CPU usage,get_metric,analyze_high_cpu,False,[],None,True,True,2331.60880000014,123.6777523158659,40,2026-01-10T22:06:35.695174
+test_034,monitoring,Get performance metrics of web server,get_metric,get_metric,True,['name'],['instance_id'],False,True,2543.3070999997653,120.21793613643597,61,2026-01-10T22:06:38.238921
+test_035,monitoring,What is i-0123456789abcdef doing,get_metric,list_instances,False,['instance_id'],['status'],False,True,2352.154999999584,108.11477719134344,53,2026-01-10T22:06:40.591556
+test_036,monitoring,Check instance health,get_metric,analyze_resource_usage,False,[],None,True,True,2326.9093999997494,122.85788501906052,46,2026-01-10T22:06:42.918907
+test_037,monitoring,Get logs from instance,get_recent_logs,get_recent_logs,True,[],None,True,True,2309.7365000003265,122.36286182261232,39,2026-01-10T22:06:45.229040
+test_038,monitoring,Show recent logs of i-xyz,get_recent_logs,get_recent_logs,True,['instance_id'],['instance_id'],True,True,2378.8367000001926,121.33741566327365,61,2026-01-10T22:06:47.608285
+test_039,monitoring,Retrieve logs from web-server,get_recent_logs,get_recent_logs,True,['name'],['resource_type'],False,True,2383.413399999881,120.73678415160676,68,2026-01-10T22:06:49.992278
+test_040,monitoring,Display instance logs,get_recent_logs,get_recent_logs,True,[],None,True,True,2340.5195999998796,124.02056969734552,39,2026-01-10T22:06:52.333211
+test_041,monitoring,Get metrics CPUUtilization from i-12345,get_metric,get_metric,True,"['instance_id', 'metric_name']",['instance_id'],True,True,2443.6037999998916,109.08555398189543,58,2026-01-10T22:06:56.777668
+test_042,monitoring,Check NetworkIn for my-app-instance,get_metric,get_metric,True,['metric_name'],['instance_id'],False,True,2383.417399999871,120.74057438706048,66,2026-01-10T22:06:59.161786
+test_043,cost,What is my monthly cost,get_cost,get_cost,True,[],None,True,True,2296.741099999963,125.71123549002239,32,2026-01-10T22:07:01.458975
+test_044,cost,Show AWS billing,get_cost,get_cost,True,[],None,True,True,2305.3829999998925,115.12891338674724,32,2026-01-10T22:07:03.764791
+test_045,cost,How much have I spent,get_cost,get_cost,True,[],None,True,True,2311.8772000002537,122.78595668678152,32,2026-01-10T22:07:06.077108
+test_046,cost,Get cost estimate,get_cost,get_cost,True,[],None,True,True,2327.2557000000234,113.7476255183173,32,2026-01-10T22:07:08.404788
+test_047,cost,Calculate my bill,get_cost,get_cost,True,[],None,True,True,2296.917399999984,124.69067121947477,32,2026-01-10T22:07:10.702154
+test_048,cost,Cost difference between regions,analyze_cost_trend,analyze_cost_trend,True,[],None,True,True,2356.53450000018,106.18566918208718,42,2026-01-10T22:07:13.059214
+test_049,cost,Analyze cost trends,analyze_cost_trend,analyze_cost_trend,True,[],None,True,True,2330.8194000001095,112.2001171369223,42,2026-01-10T22:07:15.390495
+test_050,cost,Compare costs,analyze_cost_trend,analyze_cost_trend,True,[],None,True,True,2300.8981000002677,131.30263594418412,42,2026-01-10T22:07:17.691955
+test_051,cost,Resource usage analysis,analyze_resource_usage,analyze_resource_usage,True,[],None,True,True,2294.6196999996573,127.96197701254484,46,2026-01-10T22:07:19.987050
+test_052,cost,Which instance uses the most resources,analyze_resource_usage,analyze_resource_usage,True,[],None,True,True,2293.224099999861,122.52585295497349,46,2026-01-10T22:07:22.280791
+test_053,cost,Optimize resource usage,analyze_resource_usage,analyze_resource_usage,True,[],None,True,True,2315.860900000189,126.35755397047024,46,2026-01-10T22:07:24.597204
+test_054,cost,High CPU alert,analyze_high_cpu,analyze_high_cpu,True,[],None,True,True,2326.145500000166,131.80427817857785,40,2026-01-10T22:07:26.923777
+test_055,complex,"Launch t2.micro, show topology, and get cost",create_instance,UNKNOWN,False,['instance_type'],None,False,False,2615.0933999997505,116.69864828486139,141,2026-01-10T22:07:29.539333
+test_056,complex,Create production VPC and subnet,create_vpc,UNKNOWN,False,[],None,True,False,2701.6128999998728,111.69814692774247,116,2026-01-10T22:07:32.241397
+test_057,complex,Setup infrastructure with t2.small instance,create_instance,create_instance,True,['instance_type'],['instance_type'],True,True,2354.3515999999727,121.33765052693907,66,2026-01-10T22:07:34.596200
+test_058,complex,Monitor and backup web server,get_metric,UNKNOWN,False,['name'],None,False,False,2467.2919999998157,119.08696027556724,106,2026-01-10T22:07:37.063924
+test_059,complex,Create snapshot and check cost,create_snapshot,UNKNOWN,False,[],None,True,False,2430.6547000001046,116.95140435246346,72,2026-01-10T22:07:39.495061
+test_060,complex,Resize instance and monitor performance,resize_instance,resize_instance,True,['instance_type'],"['instance_id', 'instance_type']",True,True,2609.8846999998386,109.81565246420834,111,2026-01-10T22:07:42.105409
+test_061,complex,Setup new VPC with instance,create_vpc,create_vpc,True,[],['cidr_block'],True,True,2506.2267000002976,110.06116832865146,61,2026-01-10T22:07:46.613034
+test_062,complex,Terminate old instance and create new one,terminate_resource,UNKNOWN,False,[],None,True,False,2557.7879000002213,110.75181625495428,129,2026-01-10T22:07:49.171257
+test_063,complex,Review logs and check CPU usage,get_recent_logs,get_recent_logs,True,[],None,True,True,2321.381400000064,117.0157636950235,39,2026-01-10T22:07:51.493102
+test_064,complex,Compare instance types and costs,get_cost,analyze_cost_trend,False,[],None,True,True,2295.5223999997543,130.99773111929701,42,2026-01-10T22:07:53.789258
+test_065,complex,Create instance for testing then generate topology,create_instance,UNKNOWN,False,['instance_type'],None,False,False,2540.335199999845,125.3675438858731,133,2026-01-10T22:07:56.330035
+test_066,complex,Scale infrastructure: list instances then resize,list_instances,list_instances,True,[],None,True,True,2289.3145999996705,128.9715806161667,38,2026-01-10T22:07:58.619752
+test_067,complex,"Get metrics, logs, and cost report",get_metric,UNKNOWN,False,[],None,True,False,2595.9929000000557,110.59227971884125,115,2026-01-10T22:08:01.216165
+test_068,complex,"Audit: list all, show topology, analyze cost",list_instances,UNKNOWN,False,[],None,True,False,2591.4511999999377,124.92775011784852,140,2026-01-10T22:08:03.808199
+test_069,complex,Emergency: stop high-cpu instance and alert,execute_aws_action,analyze_high_cpu,False,['action_name'],None,False,True,2315.0714000003063,130.13365656054887,40,2026-01-10T22:08:06.123817
+test_070,edge,,,create_instance,False,[],['instance_type'],True,True,2378.2192000003306,126.88278187961615,66,2026-01-10T22:08:08.502470
+test_071,edge,   ,,create_instance,False,[],"['name', 'instance_type']",True,True,2446.5017000002263,127.81119540864316,88,2026-01-10T22:08:10.949401
+test_072,edge,what,,list_instances,False,[],None,True,True,2300.058999999692,127.89359253101419,38,2026-01-10T22:08:13.249914
+test_073,edge,unknown command xyz abc,,UNKNOWN,True,[],None,True,True,2287.036100000023,130.65281271750723,28,2026-01-10T22:08:15.537367
+test_074,edge,blah blah blah,,UNKNOWN,True,[],None,True,True,2281.619700000192,127.0072925278146,28,2026-01-10T22:08:17.819394
+test_075,edge,123456789,,list_instances,False,[],None,True,True,2288.2908999999927,122.31034839632315,38,2026-01-10T22:08:20.108106
+test_076,edge,!@#$%^&*(),,UNKNOWN,True,[],None,True,True,2318.647200000214,109.27072716688818,28,2026-01-10T22:08:22.427287
+test_077,edge,Create instance with invalid type xxx99,create_instance,create_instance,True,[],['instance_type'],True,True,2377.0156999999017,120.34679131384998,63,2026-01-10T22:08:24.804888
+test_078,edge,Resize i-notreal to t2.micro,resize_instance,resize_instance,True,"['instance_id', 'instance_type']","['instance_id', 'instance_type']",True,True,2452.545200000259,125.24503759726464,94,2026-01-10T22:08:27.257853
+test_079,edge,Get metric for nonexistent-server,get_metric,get_metric,True,['name'],['instance_id'],False,True,2376.4845999999125,124.59196132665521,69,2026-01-10T22:08:29.634788
+test_080,edge,Terminate invalid-id,terminate_resource,terminate_resource,True,[],['instance_id'],True,True,2366.5711000003284,122.71832720710526,69,2026-01-10T22:08:32.001934
+test_081,edge,Create VPC with invalid CIDR 999.999.999.999,create_vpc,create_vpc,True,['cidr'],['cidr'],True,True,2514.304400000128,123.02938612810118,59,2026-01-10T22:08:36.517168
+test_082,edge,create subnet without vpc,create_subnet,create_subnet,True,[],"['vpc_id', 'cidr']",True,True,2410.1487999996607,115.88746621628431,61,2026-01-10T22:08:38.927822
+test_083,edge,AWS what,,list_instances,False,[],None,True,True,2305.271100000027,117.91019596674569,38,2026-01-10T22:08:41.233575
+test_084,edge,Can you help me please,,list_instances,False,[],None,True,True,2303.622400000222,126.87630536198786,38,2026-01-10T22:08:43.537616
+test_085,edge,I want to,,create_instance,False,[],"['name', 'instance_type']",True,True,2437.7666000000318,120.33077593295347,88,2026-01-10T22:08:45.975830
+test_086,edge,Maybe create instance,create_instance,create_instance,True,[],['instance_type'],True,True,2352.9922999996415,126.7150320551762,58,2026-01-10T22:08:48.329263
+test_087,edge,Possibly list instances,list_instances,list_instances,True,[],None,True,True,2317.6907000001847,117.46867652560185,38,2026-01-10T22:08:50.647379
+test_088,edge,Very long prompt: create instance create instance create instance create instance create instance cr,create_instance,create_instance,True,[],['instance_type'],True,True,2353.6755999998604,120.53215656134519,58,2026-01-10T22:08:53.001505
+test_089,edge,Create-Instance (with hyphens),create_instance,create_instance,True,[],"['name', 'instance_type']",True,True,2474.1343000000597,119.16638009989548,93,2026-01-10T22:08:55.476227
+test_090,edge,LAUNCH T2.MICRO UPPERCASE,create_instance,create_instance,True,['instance_type'],['instance_type'],True,True,2395.7509000001664,127.96994241992441,66,2026-01-10T22:08:57.872451
+test_091,edge,terminate_resource i-123,terminate_resource,terminate_resource,True,['instance_id'],['instance_id'],True,True,2406.7112000002453,126.01636494339287,64,2026-01-10T22:09:00.279605
+test_092,edge,list_instances status=running,list_instances,list_instances,True,[],['status'],True,True,2352.5116999999227,117.48039114059638,57,2026-01-10T22:09:02.632547
+test_093,edge,"JSON format: {""tool"": ""create_instance"", ""args"": {""instance_type"": ""t2.nano""}}",create_instance,create_instance,True,['instance_type'],"['name', 'instance_type']",True,True,2428.5412000003817,127.63700414205715,88,2026-01-10T22:09:05.061737

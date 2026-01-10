@@ -1,15 +1,4 @@
-#!/usr/bin/env python3
-"""
-AIOps LLM 성능 벤치마크 - 현재 서비스 코드 기반
 
-ChatOpsClient(aiOps.py) 기반으로 LLM의:
-- 도구 선택 정확도
-- JSON 응답 유효성
-- 파라미터 추출 정확도
-- 복합 명령 처리 능력
-
-을 벤치마킹하는 툴
-"""
 
 import csv
 import json
@@ -30,12 +19,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ============================================================================
 # 테스트 케이스 (93개) - 실제 서비스 기반
-# ============================================================================
+
 
 TEST_CASES = [
-    # ===== Instance 관리 (15개) =====
+    # Instance 관리 15개
     ("test_001", "instance", "Launch a t2.micro instance", "create_instance", ["instance_type"]),
     ("test_002", "instance", "Create a new instance named web-server with t2.small", "create_instance", ["name", "instance_type"]),
     ("test_003", "instance", "Make an instance for production", "create_instance", ["name"]),
@@ -52,7 +40,7 @@ TEST_CASES = [
     ("test_014", "instance", "Backup my-app-server", "create_snapshot", ["name"]),
     ("test_015", "instance", "Terminate resource i-xyz123", "terminate_resource", ["instance_id"]),
     
-    # ===== 네트워크 관리 (12개) =====
+    #  네트워크 관리 12개
     ("test_016", "network", "Create a VPC with CIDR 10.0.0.0/16", "create_vpc", ["cidr"]),
     ("test_017", "network", "Create a new VPC", "create_vpc", []),
     ("test_018", "network", "Create a subnet in vpc-12345678 with CIDR 10.0.1.0/24", "create_subnet", ["vpc_id", "cidr"]),
@@ -66,7 +54,7 @@ TEST_CASES = [
     ("test_026", "network", "Create CIDR 172.16.0.0/16 VPC", "create_vpc", ["cidr"]),
     ("test_027", "network", "Make subnet 172.16.0.0/24 in vpc-abc", "create_subnet", ["vpc_id", "cidr"]),
     
-    # ===== 모니터링 및 메트릭 (15개) =====
+    # 모니터링 및 메트릭 15개
     ("test_028", "monitoring", "What is the CPU usage of i-0123456789abcdef", "get_metric", ["instance_id"]),
     ("test_029", "monitoring", "Get CPU utilization for my-server", "get_metric", ["name"]),
     ("test_030", "monitoring", "Check memory usage", "get_metric", []),
@@ -83,7 +71,7 @@ TEST_CASES = [
     ("test_041", "monitoring", "Get metrics CPUUtilization from i-12345", "get_metric", ["instance_id", "metric_name"]),
     ("test_042", "monitoring", "Check NetworkIn for my-app-instance", "get_metric", ["metric_name"]),
     
-    # ===== 비용 관리 (12개) =====
+    # 비용 관리 12개
     ("test_043", "cost", "What is my monthly cost", "get_cost", []),
     ("test_044", "cost", "Show AWS billing", "get_cost", []),
     ("test_045", "cost", "How much have I spent", "get_cost", []),
@@ -97,7 +85,7 @@ TEST_CASES = [
     ("test_053", "cost", "Optimize resource usage", "analyze_resource_usage", []),
     ("test_054", "cost", "High CPU alert", "analyze_high_cpu", []),
     
-    # ===== 복합 명령 (15개) =====
+    #복합 명령 15개
     ("test_055", "complex", "Launch t2.micro, show topology, and get cost", "create_instance", ["instance_type"]),
     ("test_056", "complex", "Create production VPC and subnet", "create_vpc", []),
     ("test_057", "complex", "Setup infrastructure with t2.small instance", "create_instance", ["instance_type"]),
@@ -114,7 +102,7 @@ TEST_CASES = [
     ("test_068", "complex", "Audit: list all, show topology, analyze cost", "list_instances", []),
     ("test_069", "complex", "Emergency: stop high-cpu instance and alert", "execute_aws_action", ["action_name"]),
     
-    # ===== 엣지 케이스 및 에러 (24개) =====
+    # 엣지 케이스 및 에러 24개
     ("test_070", "edge", "", None, []),
     ("test_071", "edge", "   ", None, []),
     ("test_072", "edge", "what", None, []),
@@ -142,13 +130,7 @@ TEST_CASES = [
 ]
 
 
-# ============================================================================
-# LLM 성능 측정 클래스
-# ============================================================================
-
-
 class LLMBenchmark:
-    """LLM 벤치마크 - 실제 서비스 기반"""
 
     def __init__(
         self,
@@ -171,7 +153,7 @@ class LLMBenchmark:
         self._check_connectivity()
 
     def _check_connectivity(self):
-        """LLM 연결 확인"""
+    
         try:
             response = requests.post(
                 self.api_url,
@@ -179,11 +161,11 @@ class LLMBenchmark:
                 timeout=10,
             )
             if response.status_code == 200:
-                logger.info(f"✓ {self.model_name} 연결 성공")
+                logger.info(f"O {self.model_name} 연결 성공")
             else:
-                logger.error(f"✗ LLM 오류: {response.status_code}")
+                logger.error(f"X LLM 오류: {response.status_code}")
         except Exception as e:
-            logger.error(f"✗ LLM 연결 실패: {e}")
+            logger.error(f"X LLM 연결 실패: {e}")
 
     def _generate_prompt(self, user_input: str) -> str:
         """서비스와 동일한 프롬프트 생성"""
@@ -335,7 +317,7 @@ User: {user_input}
                 "extracted_tool": extracted_tool,
                 "tool_correct": tool_correct,
                 "expected_args": expected_args,
-                "extracted_args": list(extracted_args.keys()) if extracted_args else [],
+                "extracted_args": str(list(extracted_args.keys())) if extracted_args else "None",
                 "args_correct": args_correct,
                 "json_valid": metrics.get("json_valid", False),
                 "latency_ms": metrics.get("latency_ms", 0),
@@ -347,11 +329,11 @@ User: {user_input}
             self.results.append(result)
             
             # 로그 출력
-            status = "✓" if tool_correct else "✗"
+            status = "O" if tool_correct else "X"
             logger.info(
-                f"    {status} Tool: {extracted_tool:20s} | "
+                 f"{status} Tool: {str(extracted_tool):20s} | "
                 f"Latency: {metrics.get('latency_ms', 0):.0f}ms | "
-                f"JSON: {'✓' if metrics.get('json_valid') else '✗'}"
+                f"JSON: {'O' if metrics.get('json_valid') else 'X'}"
             )
             
             # 카테고리별 결과 저장
@@ -368,7 +350,7 @@ User: {user_input}
     def _check_args_correctness(
         self, extracted_args: Dict[str, Any], expected_args: List[str], tool: str
     ) -> bool:
-        """인자 정확도 검사"""
+        #인자 정확도 검사
         if not expected_args:
             return True
         
@@ -378,7 +360,6 @@ User: {user_input}
         return bool(extracted_arg_keys & expected_arg_set)
 
     def generate_report(self):
-        """결과 리포트 생성"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         # CSV 저장
@@ -388,8 +369,7 @@ User: {user_input}
         # JSON 저장
         json_file = self.output_dir / f"benchmark_results_{timestamp}.json"
         self._save_json(json_file)
-        
-        # 요약 리포트
+     
         summary_file = self.output_dir / f"benchmark_summary_{timestamp}.txt"
         self._save_summary(summary_file)
         
@@ -399,7 +379,7 @@ User: {user_input}
         logger.info(f"  - Summary: {summary_file}")
 
     def _save_csv(self, filepath: Path):
-        """CSV 형식으로 저장"""
+        #CSV 형식으로 저장
         if not self.results:
             logger.warning("저장할 결과가 없습니다.")
             return
@@ -411,7 +391,7 @@ User: {user_input}
             writer.writerows(self.results)
 
     def _save_json(self, filepath: Path):
-        """JSON 형식으로 저장"""
+        #JSON 형식으로 저장
         summary = {
             "total_tests": len(self.results),
             "tool_accuracy": sum(1 for r in self.results if r["tool_correct"]) / len(self.results) * 100 if self.results else 0,
@@ -438,44 +418,46 @@ User: {user_input}
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-    def _save_summary(self, filepath: Path):
-        """텍스트 요약 리포트 저장"""
+    def _save_summary(self, filepath: Path) -> None:
+
+    
         summary = {
-            "total_tests": len(self.results),
-            "tool_accuracy": sum(1 for r in self.results if r["tool_correct"]) / len(self.results) * 100 if self.results else 0,
-            "json_valid_rate": sum(1 for r in self.results if r["json_valid"]) / len(self.results) * 100 if self.results else 0,
-            "avg_latency_ms": mean(self.latencies) if self.latencies else 0,
-            "median_latency_ms": median(self.latencies) if self.latencies else 0,
-            "p95_latency_ms": self._percentile(self.latencies, 95) if self.latencies else 0,
-            "p99_latency_ms": self._percentile(self.latencies, 99) if self.latencies else 0,
+        "total_tests": len(self.results),
+        "tool_accuracy": sum(1 for r in self.results if r["tool_correct"]) / len(self.results) * 100 if self.results else 0,
+        "json_valid_rate": sum(1 for r in self.results if r["json_valid"]) / len(self.results) * 100 if self.results else 0,
+        "avg_latency_ms": mean(self.latencies) if self.latencies else 0,
+        "median_latency_ms": median(self.latencies) if self.latencies else 0,
+        "p95_latency_ms": self._percentile(self.latencies, 95) if self.latencies else 0,
+        "p99_latency_ms": self._percentile(self.latencies, 99) if self.latencies else 0,
+        "std_dev_ms": stdev(self.latencies) if len(self.latencies) > 1 else 0, 
         }
-        
+    
         with open(filepath, "w", encoding="utf-8") as f:
             f.write("=" * 80 + "\n")
             f.write("AIOps LLM 성능 벤치마크 결과 요약\n")
             f.write("=" * 80 + "\n\n")
-            
+        
             f.write(f"모델: {self.model_name}\n")
             f.write(f"테스트 일시: {datetime.now().isoformat()}\n\n")
-            
+        
             f.write("─" * 80 + "\n")
-            f.write("📊 성능 메트릭\n")
+            f.write("성능 메트릭\n")
             f.write("─" * 80 + "\n")
             f.write(f"총 테스트: {summary['total_tests']}\n")
             f.write(f"도구 선택 정확도: {summary['tool_accuracy']:.2f}%\n")
             f.write(f"JSON 유효성: {summary['json_valid_rate']:.2f}%\n\n")
-            
+        
             f.write("─" * 80 + "\n")
-            f.write("⏱️  레이턴시 (milliseconds)\n")
+            f.write("레이턴시 (milliseconds)\n")
             f.write("─" * 80 + "\n")
             f.write(f"평균: {summary['avg_latency_ms']:.2f}ms\n")
             f.write(f"중앙값: {summary['median_latency_ms']:.2f}ms\n")
             f.write(f"P95: {summary['p95_latency_ms']:.2f}ms\n")
             f.write(f"P99: {summary['p99_latency_ms']:.2f}ms\n")
-            f.write(f"표준편차: {summary['std_dev_ms']:.2f}ms\n\n")
-            
+            f.write(f"표준편차: {summary['std_dev_ms']:.2f}ms\n\n")  
+        
             f.write("─" * 80 + "\n")
-            f.write("📂 카테고리별 정확도\n")
+            f.write("카테고리별 정확도\n")
             f.write("─" * 80 + "\n")
             for category, accuracy in sorted(
                 self.category_results.items(),
@@ -485,8 +467,9 @@ User: {user_input}
                 if accuracy:
                     pct = sum(accuracy) / len(accuracy) * 100
                     f.write(f"{category:20s}: {pct:6.2f}% ({sum(accuracy)}/{len(accuracy)})\n")
-            
+        
             f.write("\n" + "=" * 80 + "\n")
+
 
     @staticmethod
     def _percentile(data: List[float], percentile: int) -> float:
@@ -496,10 +479,8 @@ User: {user_input}
         return sorted_data[min(index, len(sorted_data) - 1)]
 
 
-# ============================================================================
-# CLI
-# ============================================================================
 
+# CLI
 
 def main():
     import argparse
@@ -543,7 +524,7 @@ def main():
     
     # 최종 요약 출력
     print("\n" + "=" * 80)
-    print("🎯 최종 결과")
+    print("최종 결과")
     print("=" * 80)
     
     total = len(benchmark.results)
@@ -552,7 +533,7 @@ def main():
     
     print(f"✓ 도구 선택 정확도: {tool_correct}/{total} ({tool_correct/total*100:.2f}%)")
     print(f"✓ JSON 유효성: {json_valid}/{total} ({json_valid/total*100:.2f}%)")
-    print(f"⏱️  평균 레이턴시: {mean(benchmark.latencies) if benchmark.latencies else 0:.2f}ms")
+    print(f"평균 레이턴시: {mean(benchmark.latencies) if benchmark.latencies else 0:.2f}ms")
     print("=" * 80 + "\n")
 
 
