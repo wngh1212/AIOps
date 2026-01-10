@@ -1,0 +1,19 @@
+{
+  "test_date": "2026-01-09",
+  "model": "llama3.2:3b",
+  "total_tests": 50,
+  "tool_accuracy": 10.0,
+  "json_valid_rate": 96.0,
+  "total_requests": 50,
+  "success_count": 48,
+  "fail_count": 2,
+  "success_rate": 96.0,
+  "avg_latency_ms": 1382.8246526001021,
+  "median_latency_ms": 1289.395333500579,
+  "min_latency_ms": 436.0439590527676,
+  "max_latency_ms": 2785.9646669821814,
+  "p95_latency_ms": 2609.2141669942066,
+  "p99_latency_ms": 2785.9646669821814,
+  "std_dev_ms": 485.4303042448976,
+  "timestamp": "2026-01-09T15:12:05.583280"
+}
