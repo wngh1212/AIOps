@@ -10,7 +10,7 @@ class ChatOpsClient:
     # 안전 검사가 필요한 중요 작업 목록
     CRITICAL_TOOLS = {"terminate_resource", "resize_instance"}
 
-    # 인스턴스 ID 정규식 (i-로 시작하는 17자리 혹은 그 이상)
+    # 인스턴스 ID 정규식
     INSTANCE_ID_PATTERN = re.compile(r"(i-[a-z0-9]+)")
 
     # 인스턴스 타입 정규식
