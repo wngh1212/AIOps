@@ -145,13 +145,11 @@ class AnalysisAgent:
 
     def analyze_cost_trend(self, user_query=None):
         try:
-            #  Extract date range from natural language
             if user_query:
                 start_date, end_date, period_label = (
                     self.date_extractor.extract_date_range(user_query)
                 )
             else:
-                # Default: This month
                 now = datetime.now()
                 start_date = now.replace(day=1)
                 end_date = now
@@ -159,7 +157,6 @@ class AnalysisAgent:
 
             logger.info(f"Analyzing cost for period: {start_date} ~ {end_date}")
 
-            # Fetch cost data from AWS for specified range
             start_str, end_str = self.date_extractor.format_date_range(
                 start_date, end_date
             )

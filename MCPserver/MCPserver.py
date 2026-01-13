@@ -1,5 +1,3 @@
-# 맨 위에
-import ipaddress
 import logging
 import time
 from datetime import datetime, timedelta, timezone
@@ -36,11 +34,6 @@ class MCPServer:
             self._initialize_clients()
             raise
 
-    def _clean_str(self, text):
-        if not text:
-            return ""
-        return str(text).strip().replace("'", "").replace('"', "")
-
     def _get_latest_ami(self):
         try:
             response = self.ssm.get_parameter(
@@ -51,29 +44,6 @@ class MCPServer:
         except Exception as e:
             logger.warning(f"Failed to get latest AMI: {e}, using default")
             return "ami-0c9c94c3f41b76315"
-
-    def _resolve_id(self, identifier):
-        if not identifier:
-            return None
-        identifier = self._clean_str(identifier)
-        if identifier.startswith("i-"):
-            return identifier
-        try:
-            response = self.ec2.describe_instances()
-            target_name = identifier.lower().replace(" ", "")
-            for r in response["Reservations"]:
-                for i in r["Instances"]:
-                    if i["State"]["Name"] == "terminated":
-                        continue
-                    name_tag = next(
-                        (t["Value"] for t in i.get("Tags", []) if t["Key"] == "Name"),
-                        "",
-                    )
-                    if target_name in name_tag.lower().replace(" ", ""):
-                        return i["InstanceId"]
-        except Exception as e:
-            logger.error(f"Error resolving identifier {identifier}: {e}")
-        return None
 
     def _get_default_subnet(self):
         try:
@@ -170,45 +140,133 @@ class MCPServer:
             return 0.0
 
     def call_tool(self, tool_name: str, args: dict):
-        logger.debug(f"[MCP Execution] Tool: {tool_name} | Args: {args}")
-        # 도구 이름과 실행 로직을 매핑 (매핑 테이블)
-        tool_mapping = {
-            "create_vpc": lambda: self.create_vpc(args.get("cidr")),
-            "create_subnet": lambda: self.create_subnet(
-                args.get("vpc_id"),
-                args.get("cidr") or args.get("cidr_block"),
-            ),
-            "create_instance": lambda: self._handle_create_instance(
-                args
-            ),  # 복잡한 로직 분리
-            "list_instances": lambda: self.list_instances(args.get("status", "all")),
-            "get_cost": lambda: self.get_cost(),
-            "generate_topology": lambda: self.generate_topology(),
-            "get_metric": lambda: self.get_metric(
-                args.get("instance_id"), args.get("metric_name", "CPUUtilization")
-            ),
-            "create_snapshot": lambda: self.create_snapshot(self._get_id_or_name(args)),
-            "resize_instance": lambda: self.resize_instance(
-                args.get("instance_id"), args.get("instance_type") or args.get("name")
-            ),
-            "terminate_resource": lambda: self.terminate_resource(
-                self._get_id_or_name(args)
-            ),
-            "get_recent_logs": lambda: self.get_recent_logs(args.get("id")),
-            "execute_aws_action": lambda: self.execute_aws_action(args),
-        }
-
-        handler = tool_mapping.get(tool_name)
-
-        if not handler:
-            logger.warning(f"Unknown tool: {tool_name}")
-            return f"Error: Unknown tool {tool_name}"
+        logger.debug(f"[Tool Call] {tool_name} | Args: {args}")
 
         try:
-            return handler()
+            normalized_args = self._normalize_args(args)
+            logger.debug(f"[Normalized] {normalized_args}")
+            tool_mapping = {
+                # ===== VPC/Network =====
+                "create_vpc": lambda: self.create_vpc(normalized_args.get("cidr")),
+                "create_subnet": lambda: self.create_subnet(
+                    normalized_args.get("vpc_id"),
+                    normalized_args.get("cidr") or normalized_args.get("cidr_block"),
+                ),
+                # ===== Instance 생성/조회 =====
+                "create_instance": lambda: self._handle_create_instance(
+                    normalized_args
+                ),
+                "list_instances": lambda: self.list_instances(
+                    normalized_args.get("status", "all")
+                ),
+                # ===== Instance 상태 변경 (중요!) =====
+                "start_instances": lambda: self.start_instances(
+                    normalized_args.get("instance_id")
+                ),
+                "stop_instances": lambda: self.stop_instances(
+                    normalized_args.get("instance_id")
+                ),
+                "reboot_instances": lambda: self.reboot_instances(
+                    normalized_args.get("instance_id")
+                ),
+                "terminate_resource": lambda: self.terminate_resource(
+                    normalized_args.get("instance_id")
+                ),
+                # ===== 스냅샷/크기 조정 =====
+                "create_snapshot": lambda: self.create_snapshot(
+                    normalized_args.get("instance_id")
+                ),
+                "resize_instance": lambda: self.resize_instance(
+                    normalized_args.get("instance_id"),
+                    normalized_args.get("instance_type"),
+                ),
+                # ===== 모니터링/로깅 =====
+                "get_metric": lambda: self.get_metric(
+                    normalized_args.get("instance_id"),
+                    normalized_args.get("metric_name", "CPUUtilization"),
+                ),
+                "get_recent_logs": lambda: self.get_recent_logs(
+                    normalized_args.get("id")
+                ),
+                "get_cost": lambda: self.get_cost(),
+                "generate_topology": lambda: self.generate_topology(),
+                # ===== 제네릭 (권장하지 않음) =====
+                "execute_aws_action": lambda: self.execute_aws_action(normalized_args),
+            }
+
+            if tool_name not in tool_mapping:
+                raise ValueError(
+                    f"❌ 알 수 없는 도구: {tool_name}\n"
+                    f"   사용 가능한 도구: {list(tool_mapping.keys())}"
+                )
+
+            result = tool_mapping[tool_name]()
+
+            logger.info(f"[Success] {tool_name} | Result: {result}")
+            return result
+
         except Exception as e:
-            logger.error(f"Tool execution error: {e}", exc_info=True)
-            return f"System Error: {str(e)}"
+            logger.error(f"[Error] {tool_name} | {str(e)}")
+            return {
+                "status": "error",
+                "tool": tool_name,
+                "message": str(e),
+                "args_received": args,
+            }
+
+    def _normalize_args(self, args: dict) -> dict:
+        """
+        모든 파라미터를 정규화하고 이름→ID 변환 수행
+
+        이 함수는 모든 도구 호출의 전처리 단계입니다!
+        """
+
+        normalized = args.copy()
+
+        # ===== 1단계: 문자열 정규화 =====
+        for key in normalized:
+            if isinstance(normalized[key], str):
+                normalized[key] = self._clean_str(normalized[key])
+
+        # ===== 2단계: instance_id 필드 처리 =====
+        if "instance_id" in normalized and normalized["instance_id"]:
+            try:
+                normalized["instance_id"] = self._resolve_id(normalized["instance_id"])
+                logger.debug(
+                    f"[Name Resolution] {args.get('instance_id')} → "
+                    f"{normalized['instance_id']}"
+                )
+            except ValueError as e:
+                logger.warning(f"instance_id 변환 실패: {str(e)}")
+                # 변환 실패해도 계속 진행 (에러는 도구 실행 시 발생)
+
+        # ===== 3단계: name 필드 처리 =====
+        if "name" in normalized and normalized["name"]:
+            try:
+                normalized["instance_id"] = self._resolve_id(normalized["name"])
+                logger.debug(
+                    f"[Name Resolution] {normalized['name']} → "
+                    f"{normalized['instance_id']}"
+                )
+                # name으로 변환된 instance_id를 저장
+                del normalized["name"]  # 더 이상 필요 없음
+            except ValueError as e:
+                logger.warning(f"name 변환 실패: {str(e)}")
+
+        # ===== 4단계: InstanceIds 리스트 처리 =====
+        if "InstanceIds" in normalized and normalized["InstanceIds"]:
+            try:
+                normalized["InstanceIds"] = [
+                    self._resolve_id(id_or_name)
+                    if not id_or_name.startswith("i-")
+                    else id_or_name
+                    for id_or_name in normalized["InstanceIds"]
+                ]
+                logger.debug(f"[Batch Resolution] {normalized['InstanceIds']}")
+            except ValueError as e:
+                logger.warning(f"InstanceIds 변환 실패: {str(e)}")
+
+        return normalized
 
     def _handle_create_instance(self, args: dict):
         img = self._clean_str(args.get("image_id"))
@@ -231,7 +289,6 @@ class MCPServer:
         )
 
     def _get_id_or_name(self, args: dict):
-        # ID 혹은 Name 파라미터 추출
         return args.get("instance_id") or args.get("name")
 
     def create_vpc(self, cidr):
@@ -415,7 +472,6 @@ class MCPServer:
         return f"Terminating instance {identifier} ({tid})..."
 
     def get_recent_logs(self, instance_id):
-        # 모니터링에 필요한 로그 조회
         try:
             tid = self._resolve_id(instance_id)
             if not tid:
@@ -467,3 +523,261 @@ class MCPServer:
         except Exception as e:
             logger.error(f"AWS action failed: {e}")
             return f"Error executing action: {str(e)}"
+
+    def _clean_str(self, s: str) -> str:
+        """
+        문자열을 정규화합니다
+        - None → ValueError
+        - 타입 체크
+        - 공백 제거
+        """
+        if s is None:
+            raise ValueError("입력값이 None입니다")
+
+        if not isinstance(s, str):
+            raise TypeError(f"문자열이 아닙니다: {type(s)}")
+
+        cleaned = s.strip()
+        if not cleaned:
+            raise ValueError("입력값이 비어있습니다")
+
+        return cleaned
+
+    def _resolve_id(self, identifier: str) -> str:
+        identifier = self._clean_str(identifier)
+        # ===== Case 1: 이미 Instance ID =====
+        if identifier.startswith("i-") and len(identifier) == 19:
+            logger.debug(f"✓ Instance ID 형식: {identifier}")
+            return self._validate_instance_id(identifier)
+
+        # ===== Case 2: 이름으로 검색 =====
+        logger.debug(f"이름으로 검색: {identifier}")
+
+        try:
+            # 정확한 일치 시도
+            return self._search_exact(identifier)
+        except ValueError as e:
+            logger.debug(f"정확한 일치 실패, 부분 일치 시도")
+            # 부분 일치 시도
+            return self._search_partial(identifier)
+
+    def _validate_instance_id(self, instance_id: str) -> str:
+        """Instance ID 유효성 검증"""
+        try:
+            response = self.ec2.describe_instances(
+                InstanceIds=[instance_id],
+                Filters=[
+                    {
+                        "Name": "instance-state-name",
+                        "Values": ["running", "stopped", "pending", "stopping"],
+                    }
+                ],
+            )
+
+            if not response["Reservations"]:
+                raise ValueError(f"존재하지 않는 인스턴스: {instance_id}")
+
+            return instance_id
+
+        except self.ec2.exceptions.InvalidInstanceID.Malformed:
+            raise ValueError(f"잘못된 Instance ID 형식: {instance_id}")
+        except Exception as e:
+            raise ValueError(f"Instance ID 검증 실패: {str(e)}")
+
+    def _search_exact(self, name: str) -> str:
+        """
+        정확한 Name 태그로 검색
+        AWS Filters를 사용하므로 매우 정확함
+        """
+        try:
+            response = self.ec2.describe_instances(
+                Filters=[
+                    {"Name": "tag:Name", "Values": [name]},
+                    {
+                        "Name": "instance-state-name",
+                        "Values": ["running", "stopped", "pending", "stopping"],
+                    },
+                ]
+            )
+
+            instances = []
+            for reservation in response["Reservations"]:
+                instances.extend(reservation["Instances"])
+
+            # ===== 결과 처리 =====
+
+            if len(instances) == 0:
+                raise ValueError(f"정확한 일치 없음: {name}")
+
+            if len(instances) == 1:
+                instance_id = instances[0]["InstanceId"]
+                logger.info(f"✓ 정확한 일치 발견: {name} → {instance_id}")
+                return instance_id
+
+            # 여러 개 발견 (중복)
+            ids = [inst["InstanceId"] for inst in instances]
+            raise ValueError(
+                f"여러 인스턴스가 같은 이름 사용: {name}\nInstance IDs: {ids}"
+            )
+
+        except ValueError:
+            raise  # 그대로 전파
+        except Exception as e:
+            raise ValueError(f"정확한 검색 실패: {str(e)}")
+
+    def _search_partial(self, name: str) -> str:
+        """
+        부분 일치로 검색
+        정확한 일치가 실패했을 때만 사용됩니다
+        """
+
+        # 정규화: 하이픈, 공백, 대소문자 무시
+        normalized_input = (
+            name.lower().replace("-", "").replace("_", "").replace(" ", "")
+        )
+
+        try:
+            response = self.ec2.describe_instances(
+                Filters=[
+                    {
+                        "Name": "instance-state-name",
+                        "Values": ["running", "stopped", "pending", "stopping"],
+                    }
+                ]
+            )
+
+            matching = []
+
+            for reservation in response["Reservations"]:
+                for instance in reservation["Instances"]:
+                    # Name 태그 추출
+                    name_tag = next(
+                        (
+                            t["Value"]
+                            for t in instance.get("Tags", [])
+                            if t["Key"] == "Name"
+                        ),
+                        "",
+                    )
+
+                    if not name_tag:
+                        continue
+
+                    # 정규화된 비교
+                    normalized_tag = (
+                        name_tag.lower()
+                        .replace("-", "")
+                        .replace("_", "")
+                        .replace(" ", "")
+                    )
+
+                    # ⚠️ 부분 일치 (양쪽 포함 관계 확인)
+                    if (
+                        normalized_input in normalized_tag
+                        or normalized_tag in normalized_input
+                    ):
+                        matching.append(
+                            {"InstanceId": instance["InstanceId"], "Name": name_tag}
+                        )
+
+            # ===== 결과 처리 =====
+
+            if len(matching) == 0:
+                available = self._get_available_instances()
+                raise ValueError(
+                    f"인스턴스 없음: {name}\n"
+                    f"사용 가능한 인스턴스:\n"
+                    + "\n".join(f"  - {n}" for n in available)
+                )
+
+            if len(matching) == 1:
+                instance_id = matching[0]["InstanceId"]
+                instance_name = matching[0]["Name"]
+                logger.warning(
+                    f"⚠️ 부분 일치 사용: '{name}' → {instance_name} ({instance_id})"
+                )
+                return instance_id
+
+            # 여러 개 매칭
+            matches_str = "\n".join(
+                f"  - {m['Name']} ({m['InstanceId']})" for m in matching
+            )
+            raise ValueError(
+                f"여러 인스턴스 매칭: {name}\n{matches_str}\n"
+                f"더 정확한 이름을 사용하세요"
+            )
+
+        except ValueError:
+            raise
+        except Exception as e:
+            raise ValueError(f"부분 일치 검색 실패: {str(e)}")
+
+    def _get_available_instances(self) -> list:
+        """사용 가능한 모든 인스턴스 이름 반환 (디버깅용)"""
+        try:
+            response = self.ec2.describe_instances(
+                Filters=[
+                    {"Name": "instance-state-name", "Values": ["running", "stopped"]}
+                ]
+            )
+
+            names = []
+            for reservation in response["Reservations"]:
+                for instance in reservation["Instances"]:
+                    name_tag = next(
+                        (
+                            t["Value"]
+                            for t in instance.get("Tags", [])
+                            if t["Key"] == "Name"
+                        ),
+                        None,
+                    )
+                    if name_tag:
+                        names.append(name_tag)
+
+            return sorted(names) if names else ["(없음)"]
+        except Exception as e:
+            logger.warning(f"인스턴스 목록 조회 실패: {str(e)}")
+            return []
+
+    def start_instances(self, instance_id: str) -> dict:
+        """EC2 인스턴스 시작"""
+        try:
+            self.ec2.start_instances(InstanceIds=[instance_id])
+            logger.info(f"✓ 시작됨: {instance_id}")
+            return {
+                "status": "success",
+                "action": "start_instances",
+                "instance_id": instance_id,
+            }
+        except Exception as e:
+            logger.error(f"시작 실패: {instance_id} | {str(e)}")
+            return {"status": "error", "message": str(e)}
+
+    def stop_instances(self, instance_id: str) -> dict:
+        """EC2 인스턴스 중지 (데이터 보존)"""
+        try:
+            self.ec2.stop_instances(InstanceIds=[instance_id])
+            logger.info(f"✓ 중지됨: {instance_id}")
+            return {
+                "status": "success",
+                "action": "stop_instances",
+                "instance_id": instance_id,
+            }
+        except Exception as e:
+            logger.error(f"중지 실패: {instance_id} | {str(e)}")
+            return {"status": "error", "message": str(e)}
+
+    def reboot_instances(self, instance_id: str) -> dict:
+        """EC2 인스턴스 재부팅"""
+        try:
+            self.ec2.reboot_instances(InstanceIds=[instance_id])
+            logger.info(f"재부팅됨: {instance_id}")
+            return {
+                "status": "success",
+                "action": "reboot_instances",
+                "instance_id": instance_id,
+            }
+        except Exception as e:
+            logger.error(f"재부팅 실패: {instance_id} | {str(e)}")
+            return {"status": "error", "message": str(e)}
