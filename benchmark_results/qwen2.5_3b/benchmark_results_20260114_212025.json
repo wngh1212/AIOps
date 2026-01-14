@@ -1,0 +1,2552 @@
+{
+  "timestamp": "2026-01-14T21:20:25.713156",
+  "model": "qwen2.5:3b",
+  "summary": {
+    "total_tests": 135,
+    "tool_accuracy": 80.0,
+    "args_accuracy": 92.5925925925926,
+    "json_valid_rate": 93.33333333333333,
+    "avg_latency_ms": 2471.6126459616203,
+    "median_latency_ms": 2384.345531463623,
+    "p95_latency_ms": 2624.1352558135986,
+    "p99_latency_ms": 3757.575035095215,
+    "std_dev_ms": 536.5767417730864
+  },
+  "category_accuracy": {
+    "instance": 100.0,
+    "network": 100.0,
+    "monitoring": 72.22222222222221,
+    "cost": 80.0,
+    "naming": 83.33333333333334,
+    "complex": 43.47826086956522,
+    "edge": 85.0
+  },
+  "results": [
+    {
+      "test_id": "test_001",
+      "category": "instance",
+      "prompt": "Launch a t2.micro instance",
+      "expected_tool": "create_instance",
+      "extracted_tool": "create_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_type"
+      ],
+      "extracted_args": [
+        "name",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 8326.881647109985,
+      "tokens_per_sec": 0.8406508338484063,
+      "response_length": 94,
+      "timestamp": "2026-01-14T21:14:48.336575"
+    },
+    {
+      "test_id": "test_002",
+      "category": "instance",
+      "prompt": "Create a new instance named web-server with t2.small",
+      "expected_tool": "create_instance",
+      "extracted_tool": "create_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "name",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2464.3712043762207,
+      "tokens_per_sec": 2.8404811692205407,
+      "response_length": 88,
+      "timestamp": "2026-01-14T21:14:50.801148"
+    },
+    {
+      "test_id": "test_003",
+      "category": "instance",
+      "prompt": "Make an instance for production",
+      "expected_tool": "create_instance",
+      "extracted_tool": "create_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2379.9479007720947,
+      "tokens_per_sec": 2.1008863254434758,
+      "response_length": 59,
+      "timestamp": "2026-01-14T21:14:53.181303"
+    },
+    {
+      "test_id": "test_004",
+      "category": "instance",
+      "prompt": "Show all instances",
+      "expected_tool": "list_instances",
+      "extracted_tool": "list_instances",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "status"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2348.548650741577,
+      "tokens_per_sec": 2.1289744193381734,
+      "response_length": 53,
+      "timestamp": "2026-01-14T21:14:55.530034"
+    },
+    {
+      "test_id": "test_005",
+      "category": "instance",
+      "prompt": "List running instances",
+      "expected_tool": "list_instances",
+      "extracted_tool": "list_instances",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "status"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2362.9660606384277,
+      "tokens_per_sec": 2.11598468691044,
+      "response_length": 57,
+      "timestamp": "2026-01-14T21:14:57.893184"
+    },
+    {
+      "test_id": "test_006",
+      "category": "instance",
+      "prompt": "Start web-server",
+      "expected_tool": "start_instances",
+      "extracted_tool": "start_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2348.7300872802734,
+      "tokens_per_sec": 2.1288099586571825,
+      "response_length": 66,
+      "timestamp": "2026-01-14T21:15:00.242099"
+    },
+    {
+      "test_id": "test_007",
+      "category": "instance",
+      "prompt": "Start the database instance",
+      "expected_tool": "start_instances",
+      "extracted_tool": "start_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2350.1510620117188,
+      "tokens_per_sec": 2.1275228136696978,
+      "response_length": 64,
+      "timestamp": "2026-01-14T21:15:02.592439"
+    },
+    {
+      "test_id": "test_008",
+      "category": "instance",
+      "prompt": "Start i-0123456789abcdef",
+      "expected_tool": "start_instances",
+      "extracted_tool": "start_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2464.5040035247803,
+      "tokens_per_sec": 2.028805793315371,
+      "response_length": 74,
+      "timestamp": "2026-01-14T21:15:05.057172"
+    },
+    {
+      "test_id": "test_009",
+      "category": "instance",
+      "prompt": "Stop web-server",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "stop_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2362.9097938537598,
+      "tokens_per_sec": 2.1160350737915006,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:15:07.420295"
+    },
+    {
+      "test_id": "test_010",
+      "category": "instance",
+      "prompt": "Stop the database instance",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "stop_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2380.5296421051025,
+      "tokens_per_sec": 2.1003729218756964,
+      "response_length": 72,
+      "timestamp": "2026-01-14T21:15:09.801394"
+    },
+    {
+      "test_id": "test_011",
+      "category": "instance",
+      "prompt": "Stop i-abcd1234",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "stop_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2411.1247062683105,
+      "tokens_per_sec": 2.0737210261258046,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:15:12.212742"
+    },
+    {
+      "test_id": "test_012",
+      "category": "instance",
+      "prompt": "Reboot web-server",
+      "expected_tool": "reboot_instances",
+      "extracted_tool": "reboot_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2372.7710247039795,
+      "tokens_per_sec": 2.1072408369550897,
+      "response_length": 67,
+      "timestamp": "2026-01-14T21:15:14.585726"
+    },
+    {
+      "test_id": "test_013",
+      "category": "instance",
+      "prompt": "Reboot the app server",
+      "expected_tool": "reboot_instances",
+      "extracted_tool": "reboot_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2367.5029277801514,
+      "tokens_per_sec": 2.1119298064345644,
+      "response_length": 67,
+      "timestamp": "2026-01-14T21:15:16.953471"
+    },
+    {
+      "test_id": "test_014",
+      "category": "instance",
+      "prompt": "Reboot i-xyz123 instance",
+      "expected_tool": "reboot_instances",
+      "extracted_tool": "reboot_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2391.3941383361816,
+      "tokens_per_sec": 2.090830582815914,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:15:19.345083"
+    },
+    {
+      "test_id": "test_015",
+      "category": "instance",
+      "prompt": "Terminate i-0123456789abcdef",
+      "expected_tool": "terminate_resource",
+      "extracted_tool": "terminate_resource",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2482.882022857666,
+      "tokens_per_sec": 2.0137887962333645,
+      "response_length": 77,
+      "timestamp": "2026-01-14T21:15:21.828191"
+    },
+    {
+      "test_id": "test_016",
+      "category": "instance",
+      "prompt": "Delete the web-server instance",
+      "expected_tool": "terminate_resource",
+      "extracted_tool": "terminate_resource",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2365.58198928833,
+      "tokens_per_sec": 2.1136447701414136,
+      "response_length": 69,
+      "timestamp": "2026-01-14T21:15:24.193993"
+    },
+    {
+      "test_id": "test_017",
+      "category": "instance",
+      "prompt": "Terminate the old-app instance",
+      "expected_tool": "terminate_resource",
+      "extracted_tool": "terminate_resource",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2365.6415939331055,
+      "tokens_per_sec": 2.113591514802131,
+      "response_length": 66,
+      "timestamp": "2026-01-14T21:15:26.559856"
+    },
+    {
+      "test_id": "test_018",
+      "category": "instance",
+      "prompt": "Terminate resource i-xyz123",
+      "expected_tool": "terminate_resource",
+      "extracted_tool": "terminate_resource",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2418.6837673187256,
+      "tokens_per_sec": 2.067240069809886,
+      "response_length": 67,
+      "timestamp": "2026-01-14T21:15:28.978781"
+    },
+    {
+      "test_id": "test_019",
+      "category": "instance",
+      "prompt": "Resize i-0123456789abcdef to t2.large",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2563.429594039917,
+      "tokens_per_sec": 2.7307166993294056,
+      "response_length": 103,
+      "timestamp": "2026-01-14T21:15:31.542623"
+    },
+    {
+      "test_id": "test_020",
+      "category": "instance",
+      "prompt": "Change instance type of my-server to t3.xlarge",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2474.524736404419,
+      "tokens_per_sec": 2.8288260355688637,
+      "response_length": 95,
+      "timestamp": "2026-01-14T21:15:34.017371"
+    },
+    {
+      "test_id": "test_021",
+      "category": "instance",
+      "prompt": "Scale up AIOpsmake to t3.large",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2479.3155193328857,
+      "tokens_per_sec": 2.823359893251305,
+      "response_length": 94,
+      "timestamp": "2026-01-14T21:15:38.497336"
+    },
+    {
+      "test_id": "test_022",
+      "category": "instance",
+      "prompt": "Resize web-server instance to t2.medium",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2438.8232231140137,
+      "tokens_per_sec": 2.8702367328871192,
+      "response_length": 96,
+      "timestamp": "2026-01-14T21:15:40.936381"
+    },
+    {
+      "test_id": "test_023",
+      "category": "instance",
+      "prompt": "Change i-abc123 type to t3.small",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2496.2499141693115,
+      "tokens_per_sec": 2.804206405883612,
+      "response_length": 93,
+      "timestamp": "2026-01-14T21:15:43.432874"
+    },
+    {
+      "test_id": "test_024",
+      "category": "instance",
+      "prompt": "Upgrade prod-db to t3.xlarge",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2462.745189666748,
+      "tokens_per_sec": 2.842356582146942,
+      "response_length": 93,
+      "timestamp": "2026-01-14T21:15:45.895864"
+    },
+    {
+      "test_id": "test_025",
+      "category": "instance",
+      "prompt": "Create a snapshot of i-0123456789abcdef",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2467.07820892334,
+      "tokens_per_sec": 2.0266888913027428,
+      "response_length": 74,
+      "timestamp": "2026-01-14T21:15:48.363178"
+    },
+    {
+      "test_id": "test_026",
+      "category": "instance",
+      "prompt": "Backup my-app-server",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2362.5643253326416,
+      "tokens_per_sec": 2.1163444933064484,
+      "response_length": 69,
+      "timestamp": "2026-01-14T21:15:50.726061"
+    },
+    {
+      "test_id": "test_027",
+      "category": "instance",
+      "prompt": "Create snapshot of web-server",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2379.088878631592,
+      "tokens_per_sec": 2.1016448964596512,
+      "response_length": 66,
+      "timestamp": "2026-01-14T21:15:53.105377"
+    },
+    {
+      "test_id": "test_028",
+      "category": "instance",
+      "prompt": "Take snapshot from i-xyz789",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2409.383773803711,
+      "tokens_per_sec": 2.0752194209835095,
+      "response_length": 64,
+      "timestamp": "2026-01-14T21:15:55.515005"
+    },
+    {
+      "test_id": "test_029",
+      "category": "instance",
+      "prompt": "Backup the database instance",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2360.896348953247,
+      "tokens_per_sec": 2.117839693477799,
+      "response_length": 73,
+      "timestamp": "2026-01-14T21:15:57.876157"
+    },
+    {
+      "test_id": "test_030",
+      "category": "instance",
+      "prompt": "Create snapshot of AIOpsmake",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2404.846668243408,
+      "tokens_per_sec": 2.0791346350793294,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:16:00.281268"
+    },
+    {
+      "test_id": "test_031",
+      "category": "network",
+      "prompt": "Create a VPC with CIDR 10.0.0.0/16",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [
+        "cidr"
+      ],
+      "extracted_args": [
+        "cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2485.1884841918945,
+      "tokens_per_sec": 2.0119198329642365,
+      "response_length": 55,
+      "timestamp": "2026-01-14T21:16:02.766719"
+    },
+    {
+      "test_id": "test_032",
+      "category": "network",
+      "prompt": "Create a new VPC",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "vpc_cidr_block"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2480.2658557891846,
+      "tokens_per_sec": 2.015912926563702,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:16:05.247219"
+    },
+    {
+      "test_id": "test_033",
+      "category": "network",
+      "prompt": "Create production-vpc with 172.16.0.0/16",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [
+        "cidr"
+      ],
+      "extracted_args": [
+        "vpc_cidr"
+      ],
+      "args_correct": false,
+      "json_valid": true,
+      "latency_ms": 2516.753911972046,
+      "tokens_per_sec": 1.9866860944231786,
+      "response_length": 61,
+      "timestamp": "2026-01-14T21:16:07.764187"
+    },
+    {
+      "test_id": "test_034",
+      "category": "network",
+      "prompt": "Create a subnet in vpc-12345678 with CIDR 10.0.1.0/24",
+      "expected_tool": "create_subnet",
+      "extracted_tool": "create_subnet",
+      "tool_correct": true,
+      "expected_args": [
+        "vpc_id",
+        "cidr"
+      ],
+      "extracted_args": [
+        "vpc_id",
+        "cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2624.1352558135986,
+      "tokens_per_sec": 2.667545426437895,
+      "response_length": 84,
+      "timestamp": "2026-01-14T21:16:10.388563"
+    },
+    {
+      "test_id": "test_035",
+      "category": "network",
+      "prompt": "Add a subnet to my VPC",
+      "expected_tool": "create_subnet",
+      "extracted_tool": "create_subnet",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "vpc_id",
+        "cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2395.6170082092285,
+      "tokens_per_sec": 2.922002964585996,
+      "response_length": 61,
+      "timestamp": "2026-01-14T21:16:12.784398"
+    },
+    {
+      "test_id": "test_036",
+      "category": "network",
+      "prompt": "Create subnet 10.0.2.0/24 in vpc-abc123",
+      "expected_tool": "create_subnet",
+      "extracted_tool": "create_subnet",
+      "tool_correct": true,
+      "expected_args": [
+        "vpc_id",
+        "cidr"
+      ],
+      "extracted_args": [
+        "vpc_id",
+        "cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2585.3397846221924,
+      "tokens_per_sec": 2.707574471114613,
+      "response_length": 82,
+      "timestamp": "2026-01-14T21:16:15.369977"
+    },
+    {
+      "test_id": "test_037",
+      "category": "network",
+      "prompt": "Show network topology",
+      "expected_tool": "generate_topology",
+      "extracted_tool": "generate_topology",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2304.8038482666016,
+      "tokens_per_sec": 1.7355056062616012,
+      "response_length": 41,
+      "timestamp": "2026-01-14T21:16:17.674986"
+    },
+    {
+      "test_id": "test_038",
+      "category": "network",
+      "prompt": "Generate VPC topology",
+      "expected_tool": "generate_topology",
+      "extracted_tool": "generate_topology",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2312.2267723083496,
+      "tokens_per_sec": 1.7299341257980103,
+      "response_length": 41,
+      "timestamp": "2026-01-14T21:16:19.987419"
+    },
+    {
+      "test_id": "test_039",
+      "category": "network",
+      "prompt": "Display the infrastructure layout",
+      "expected_tool": "generate_topology",
+      "extracted_tool": "generate_topology",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2338.9058113098145,
+      "tokens_per_sec": 1.7102014030056019,
+      "response_length": 41,
+      "timestamp": "2026-01-14T21:16:22.326549"
+    },
+    {
+      "test_id": "test_040",
+      "category": "network",
+      "prompt": "What is the network structure",
+      "expected_tool": "generate_topology",
+      "extracted_tool": "generate_topology",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2297.3713874816895,
+      "tokens_per_sec": 1.741120317679538,
+      "response_length": 41,
+      "timestamp": "2026-01-14T21:16:24.624147"
+    },
+    {
+      "test_id": "test_041",
+      "category": "network",
+      "prompt": "Create VPC with name production-vpc",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "vpc_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2406.123399734497,
+      "tokens_per_sec": 2.078031409590931,
+      "response_length": 62,
+      "timestamp": "2026-01-14T21:16:29.030582"
+    },
+    {
+      "test_id": "test_042",
+      "category": "network",
+      "prompt": "Set up subnet in default VPC",
+      "expected_tool": "create_subnet",
+      "extracted_tool": "create_subnet",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "vpc_id",
+        "cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2555.9639930725098,
+      "tokens_per_sec": 2.7386927276645006,
+      "response_length": 82,
+      "timestamp": "2026-01-14T21:16:31.586876"
+    },
+    {
+      "test_id": "test_043",
+      "category": "monitoring",
+      "prompt": "What is the CPU usage of i-0123456789abcdef",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2574.3815898895264,
+      "tokens_per_sec": 2.719099618910959,
+      "response_length": 102,
+      "timestamp": "2026-01-14T21:16:34.161496"
+    },
+    {
+      "test_id": "test_044",
+      "category": "monitoring",
+      "prompt": "Get CPU utilization for my-server",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2464.473247528076,
+      "tokens_per_sec": 2.8403635572109223,
+      "response_length": 93,
+      "timestamp": "2026-01-14T21:16:36.626195"
+    },
+    {
+      "test_id": "test_045",
+      "category": "monitoring",
+      "prompt": "Check CPU metric for web-server",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2474.4691848754883,
+      "tokens_per_sec": 2.8288895423655194,
+      "response_length": 94,
+      "timestamp": "2026-01-14T21:16:39.100883"
+    },
+    {
+      "test_id": "test_046",
+      "category": "monitoring",
+      "prompt": "Get metrics for i-abc123",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2452.5601863861084,
+      "tokens_per_sec": 2.8541603337019943,
+      "response_length": 78,
+      "timestamp": "2026-01-14T21:16:41.553671"
+    },
+    {
+      "test_id": "test_047",
+      "category": "monitoring",
+      "prompt": "Get CPUUtilization metric from i-12345",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2488.6584281921387,
+      "tokens_per_sec": 2.812760449848106,
+      "response_length": 91,
+      "timestamp": "2026-01-14T21:16:44.042560"
+    },
+    {
+      "test_id": "test_048",
+      "category": "monitoring",
+      "prompt": "Check NetworkIn for my-app-instance",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "metric_name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2438.7409687042236,
+      "tokens_per_sec": 2.8703335408841353,
+      "response_length": 94,
+      "timestamp": "2026-01-14T21:16:46.481530"
+    },
+    {
+      "test_id": "test_049",
+      "category": "monitoring",
+      "prompt": "Monitor web-server performance",
+      "expected_tool": "get_metric",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [],
+      "args_correct": false,
+      "json_valid": true,
+      "latency_ms": 2314.943313598633,
+      "tokens_per_sec": 1.7279040814964526,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:16:48.796705"
+    },
+    {
+      "test_id": "test_050",
+      "category": "monitoring",
+      "prompt": "Instance CPU usage",
+      "expected_tool": "get_metric",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2321.150779724121,
+      "tokens_per_sec": 1.723283138235172,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:16:51.118093"
+    },
+    {
+      "test_id": "test_051",
+      "category": "monitoring",
+      "prompt": "Show recent logs of i-xyz",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2393.009662628174,
+      "tokens_per_sec": 2.089419060058723,
+      "response_length": 61,
+      "timestamp": "2026-01-14T21:16:53.511329"
+    },
+    {
+      "test_id": "test_052",
+      "category": "monitoring",
+      "prompt": "Retrieve logs from web-server",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2380.8979988098145,
+      "tokens_per_sec": 2.1000479661453144,
+      "response_length": 66,
+      "timestamp": "2026-01-14T21:16:55.892467"
+    },
+    {
+      "test_id": "test_053",
+      "category": "monitoring",
+      "prompt": "Get logs from database instance",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2369.1065311431885,
+      "tokens_per_sec": 2.1105002811280507,
+      "response_length": 73,
+      "timestamp": "2026-01-14T21:16:58.261796"
+    },
+    {
+      "test_id": "test_054",
+      "category": "monitoring",
+      "prompt": "Display instance logs",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2370.133876800537,
+      "tokens_per_sec": 2.1095854748717993,
+      "response_length": 59,
+      "timestamp": "2026-01-14T21:17:00.632141"
+    },
+    {
+      "test_id": "test_055",
+      "category": "monitoring",
+      "prompt": "Fetch logs from i-prod123",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2430.5615425109863,
+      "tokens_per_sec": 2.0571377899917542,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:17:03.062924"
+    },
+    {
+      "test_id": "test_056",
+      "category": "monitoring",
+      "prompt": "Check instance health",
+      "expected_tool": "get_metric",
+      "extracted_tool": "list_instances",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [
+        "status"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2344.564199447632,
+      "tokens_per_sec": 2.1325924882662526,
+      "response_length": 53,
+      "timestamp": "2026-01-14T21:17:05.407698"
+    },
+    {
+      "test_id": "test_057",
+      "category": "monitoring",
+      "prompt": "Monitor instances",
+      "expected_tool": "list_instances",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2307.302236557007,
+      "tokens_per_sec": 1.7336263696293486,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:17:07.715207"
+    },
+    {
+      "test_id": "test_058",
+      "category": "monitoring",
+      "prompt": "Get performance metrics of web server",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2446.0973739624023,
+      "tokens_per_sec": 2.861701285693622,
+      "response_length": 98,
+      "timestamp": "2026-01-14T21:17:10.161555"
+    },
+    {
+      "test_id": "test_059",
+      "category": "monitoring",
+      "prompt": "What is i-0123456789abcdef doing",
+      "expected_tool": "get_metric",
+      "extracted_tool": "list_instances",
+      "tool_correct": false,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [],
+      "args_correct": false,
+      "json_valid": true,
+      "latency_ms": 2335.3850841522217,
+      "tokens_per_sec": 1.7127796298536597,
+      "response_length": 38,
+      "timestamp": "2026-01-14T21:17:12.497185"
+    },
+    {
+      "test_id": "test_060",
+      "category": "monitoring",
+      "prompt": "Get instance info",
+      "expected_tool": "list_instances",
+      "extracted_tool": "list_instances",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2322.4687576293945,
+      "tokens_per_sec": 1.7223051922054298,
+      "response_length": 38,
+      "timestamp": "2026-01-14T21:17:14.819868"
+    },
+    {
+      "test_id": "test_061",
+      "category": "cost",
+      "prompt": "What is my monthly cost",
+      "expected_tool": "get_cost",
+      "extracted_tool": "get_cost",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2316.028118133545,
+      "tokens_per_sec": 1.7270947484107164,
+      "response_length": 32,
+      "timestamp": "2026-01-14T21:17:19.136623"
+    },
+    {
+      "test_id": "test_062",
+      "category": "cost",
+      "prompt": "Show AWS billing",
+      "expected_tool": "get_cost",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2315.998077392578,
+      "tokens_per_sec": 1.7271171505044265,
+      "response_length": 42,
+      "timestamp": "2026-01-14T21:17:21.452861"
+    },
+    {
+      "test_id": "test_063",
+      "category": "cost",
+      "prompt": "How much have I spent",
+      "expected_tool": "get_cost",
+      "extracted_tool": "get_cost",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2315.85693359375,
+      "tokens_per_sec": 1.7272224125662177,
+      "response_length": 32,
+      "timestamp": "2026-01-14T21:17:23.768927"
+    },
+    {
+      "test_id": "test_064",
+      "category": "cost",
+      "prompt": "Get cost estimate",
+      "expected_tool": "get_cost",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2326.2593746185303,
+      "tokens_per_sec": 1.719498712672974,
+      "response_length": 42,
+      "timestamp": "2026-01-14T21:17:26.095405"
+    },
+    {
+      "test_id": "test_065",
+      "category": "cost",
+      "prompt": "Calculate my bill",
+      "expected_tool": "get_cost",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2341.118335723877,
+      "tokens_per_sec": 1.7085851402565666,
+      "response_length": 42,
+      "timestamp": "2026-01-14T21:17:28.436746"
+    },
+    {
+      "test_id": "test_066",
+      "category": "cost",
+      "prompt": "analyze cost trend for last 3 months",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2320.4379081726074,
+      "tokens_per_sec": 1.7238125553422294,
+      "response_length": 42,
+      "timestamp": "2026-01-14T21:17:30.757421"
+    },
+    {
+      "test_id": "test_067",
+      "category": "cost",
+      "prompt": "analyze cost trend for last 3 month",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2326.9572257995605,
+      "tokens_per_sec": 1.7189830374409092,
+      "response_length": 42,
+      "timestamp": "2026-01-14T21:17:33.084594"
+    },
+    {
+      "test_id": "test_068",
+      "category": "cost",
+      "prompt": "Cost difference between January and December",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "time_period_start",
+        "time_period_end"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2647.0823287963867,
+      "tokens_per_sec": 2.6444209626010613,
+      "response_length": 108,
+      "timestamp": "2026-01-14T21:17:35.731898"
+    },
+    {
+      "test_id": "test_069",
+      "category": "cost",
+      "prompt": "Cost comparison for last quarter",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2308.8951110839844,
+      "tokens_per_sec": 1.7324303649818344,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:17:38.041014"
+    },
+    {
+      "test_id": "test_070",
+      "category": "cost",
+      "prompt": "Analyze cost trends for Q4",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "time_range"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2389.918804168701,
+      "tokens_per_sec": 2.0921212851577096,
+      "response_length": 60,
+      "timestamp": "2026-01-14T21:17:40.431144"
+    },
+    {
+      "test_id": "test_071",
+      "category": "cost",
+      "prompt": "Cost trend analysis for the last 6 months",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "period"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2384.345531463623,
+      "tokens_per_sec": 2.9358161003212784,
+      "response_length": 67,
+      "timestamp": "2026-01-14T21:17:42.815702"
+    },
+    {
+      "test_id": "test_072",
+      "category": "cost",
+      "prompt": "Resource usage analysis",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2353.2097339630127,
+      "tokens_per_sec": 1.6998059893555035,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:17:45.169143"
+    },
+    {
+      "test_id": "test_073",
+      "category": "cost",
+      "prompt": "Which instance uses the most resources",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2342.498302459717,
+      "tokens_per_sec": 1.7075786120313685,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:17:47.511880"
+    },
+    {
+      "test_id": "test_074",
+      "category": "cost",
+      "prompt": "Optimize resource usage",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2312.3908042907715,
+      "tokens_per_sec": 1.7298114110200467,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:17:49.824504"
+    },
+    {
+      "test_id": "test_075",
+      "category": "cost",
+      "prompt": "Analyze resource utilization",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2324.8748779296875,
+      "tokens_per_sec": 1.7205226990804854,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:17:52.149588"
+    },
+    {
+      "test_id": "test_076",
+      "category": "cost",
+      "prompt": "High CPU alert",
+      "expected_tool": "analyze_high_cpu",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2318.1259632110596,
+      "tokens_per_sec": 1.725531771560513,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:17:54.467920"
+    },
+    {
+      "test_id": "test_077",
+      "category": "cost",
+      "prompt": "Analyze high cpu instances",
+      "expected_tool": "analyze_high_cpu",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2339.369058609009,
+      "tokens_per_sec": 1.7098627449481631,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:17:56.807514"
+    },
+    {
+      "test_id": "test_078",
+      "category": "cost",
+      "prompt": "Which instances have high CPU usage",
+      "expected_tool": "analyze_high_cpu",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2338.0978107452393,
+      "tokens_per_sec": 1.7107924149353915,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:17:59.145836"
+    },
+    {
+      "test_id": "test_079",
+      "category": "cost",
+      "prompt": "Check for CPU spikes",
+      "expected_tool": "analyze_high_cpu",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2329.8840522766113,
+      "tokens_per_sec": 1.716823631670194,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:18:01.475943"
+    },
+    {
+      "test_id": "test_080",
+      "category": "cost",
+      "prompt": "Monitor high CPU utilization",
+      "expected_tool": "analyze_high_cpu",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2336.9719982147217,
+      "tokens_per_sec": 1.7116165718098941,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:18:03.813126"
+    },
+    {
+      "test_id": "test_081",
+      "category": "naming",
+      "prompt": "Stop AIOpsmake",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "stop_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2389.1286849975586,
+      "tokens_per_sec": 2.0928131797158134,
+      "response_length": 64,
+      "timestamp": "2026-01-14T21:18:08.202760"
+    },
+    {
+      "test_id": "test_082",
+      "category": "naming",
+      "prompt": "Start newserver",
+      "expected_tool": "start_instances",
+      "extracted_tool": "create_instance",
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2350.9511947631836,
+      "tokens_per_sec": 2.126798723485904,
+      "response_length": 58,
+      "timestamp": "2026-01-14T21:18:10.553946"
+    },
+    {
+      "test_id": "test_083",
+      "category": "naming",
+      "prompt": "Terminate AIOpsmake instance",
+      "expected_tool": "terminate_resource",
+      "extracted_tool": "terminate_resource",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2386.7695331573486,
+      "tokens_per_sec": 2.0948817766186782,
+      "response_length": 68,
+      "timestamp": "2026-01-14T21:18:12.940950"
+    },
+    {
+      "test_id": "test_084",
+      "category": "naming",
+      "prompt": "Resize AIOpsmake to t3.large",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2501.3556480407715,
+      "tokens_per_sec": 2.798482497074283,
+      "response_length": 94,
+      "timestamp": "2026-01-14T21:18:15.442518"
+    },
+    {
+      "test_id": "test_085",
+      "category": "naming",
+      "prompt": "Get metrics for AIOpsmake",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2469.3498611450195,
+      "tokens_per_sec": 2.834754244485288,
+      "response_length": 82,
+      "timestamp": "2026-01-14T21:18:17.912078"
+    },
+    {
+      "test_id": "test_086",
+      "category": "naming",
+      "prompt": "Create snapshot of new-instance",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2349.733352661133,
+      "tokens_per_sec": 2.1279010209125953,
+      "response_length": 68,
+      "timestamp": "2026-01-14T21:18:20.262023"
+    },
+    {
+      "test_id": "test_087",
+      "category": "naming",
+      "prompt": "Reboot web-server",
+      "expected_tool": "reboot_instances",
+      "extracted_tool": "reboot_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2376.173973083496,
+      "tokens_per_sec": 2.10422303107362,
+      "response_length": 67,
+      "timestamp": "2026-01-14T21:18:22.638441"
+    },
+    {
+      "test_id": "test_088",
+      "category": "naming",
+      "prompt": "Get logs from newserver",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id_or_name"
+      ],
+      "args_correct": false,
+      "json_valid": true,
+      "latency_ms": 2403.0802249908447,
+      "tokens_per_sec": 2.08066295415462,
+      "response_length": 73,
+      "timestamp": "2026-01-14T21:18:25.041737"
+    },
+    {
+      "test_id": "test_089",
+      "category": "naming",
+      "prompt": "Check CPU for AIOpsmake",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "metric_name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2442.641258239746,
+      "tokens_per_sec": 2.865750333327477,
+      "response_length": 93,
+      "timestamp": "2026-01-14T21:18:27.484623"
+    },
+    {
+      "test_id": "test_090",
+      "category": "naming",
+      "prompt": "Backup test instance",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2369.4846630096436,
+      "tokens_per_sec": 2.1101634790280346,
+      "response_length": 69,
+      "timestamp": "2026-01-14T21:18:29.854323"
+    },
+    {
+      "test_id": "test_091",
+      "category": "naming",
+      "prompt": "Monitor production-db",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2360.431671142578,
+      "tokens_per_sec": 2.1182566142995896,
+      "response_length": 69,
+      "timestamp": "2026-01-14T21:18:32.214979"
+    },
+    {
+      "test_id": "test_092",
+      "category": "naming",
+      "prompt": "Stop old-app server",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "stop_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2376.885414123535,
+      "tokens_per_sec": 2.103593202385705,
+      "response_length": 69,
+      "timestamp": "2026-01-14T21:18:34.592100"
+    },
+    {
+      "test_id": "test_093",
+      "category": "complex",
+      "prompt": "Launch t2.micro and show topology",
+      "expected_tool": "create_instance",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [
+        "instance_type"
+      ],
+      "extracted_args": [],
+      "args_correct": false,
+      "json_valid": false,
+      "latency_ms": 2551.4001846313477,
+      "tokens_per_sec": 3.919416507154052,
+      "response_length": 132,
+      "timestamp": "2026-01-14T21:18:37.143773"
+    },
+    {
+      "test_id": "test_094",
+      "category": "complex",
+      "prompt": "Create VPC and subnet for production",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "vpc_cidr_block"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2500.12469291687,
+      "tokens_per_sec": 1.9999002506417194,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:18:39.644121"
+    },
+    {
+      "test_id": "test_095",
+      "category": "complex",
+      "prompt": "Setup infrastructure: create VPC, subnet, instance",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "vpc_cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2514.6687030792236,
+      "tokens_per_sec": 1.988333490561789,
+      "response_length": 59,
+      "timestamp": "2026-01-14T21:18:42.159023"
+    },
+    {
+      "test_id": "test_096",
+      "category": "complex",
+      "prompt": "Start web-server and get CPU metrics",
+      "expected_tool": "start_instances",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [],
+      "args_correct": false,
+      "json_valid": false,
+      "latency_ms": 2648.195743560791,
+      "tokens_per_sec": 4.531387088427488,
+      "response_length": 163,
+      "timestamp": "2026-01-14T21:18:44.807470"
+    },
+    {
+      "test_id": "test_097",
+      "category": "complex",
+      "prompt": "Stop old-app and create snapshot",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2379.7624111175537,
+      "tokens_per_sec": 2.101050078210103,
+      "response_length": 63,
+      "timestamp": "2026-01-14T21:18:47.187454"
+    },
+    {
+      "test_id": "test_098",
+      "category": "complex",
+      "prompt": "Resize AIOpsmake to t3.large then monitor",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2474.384546279907,
+      "tokens_per_sec": 2.8289863071300263,
+      "response_length": 94,
+      "timestamp": "2026-01-14T21:18:49.662081"
+    },
+    {
+      "test_id": "test_099",
+      "category": "complex",
+      "prompt": "List instances, show topology, and get cost",
+      "expected_tool": "list_instances",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": false,
+      "latency_ms": 2545.2046394348145,
+      "tokens_per_sec": 4.714748595878997,
+      "response_length": 115,
+      "timestamp": "2026-01-14T21:18:52.207515"
+    },
+    {
+      "test_id": "test_100",
+      "category": "complex",
+      "prompt": "Create snapshot of web-server and check logs",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [],
+      "args_correct": false,
+      "json_valid": false,
+      "latency_ms": 2572.8843212127686,
+      "tokens_per_sec": 3.886688537666686,
+      "response_length": 135,
+      "timestamp": "2026-01-14T21:18:54.780655"
+    },
+    {
+      "test_id": "test_101",
+      "category": "complex",
+      "prompt": "Get metrics for AIOpsmake and analyze cost trend",
+      "expected_tool": "get_metric",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [],
+      "args_correct": false,
+      "json_valid": false,
+      "latency_ms": 2621.819257736206,
+      "tokens_per_sec": 4.195559998097612,
+      "response_length": 136,
+      "timestamp": "2026-01-14T21:18:59.403031"
+    },
+    {
+      "test_id": "test_102",
+      "category": "complex",
+      "prompt": "Audit: list all instances, topology, cost",
+      "expected_tool": "list_instances",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": false,
+      "latency_ms": 2534.5678329467773,
+      "tokens_per_sec": 4.734534954642891,
+      "response_length": 115,
+      "timestamp": "2026-01-14T21:19:01.937846"
+    },
+    {
+      "test_id": "test_103",
+      "category": "complex",
+      "prompt": "Emergency: stop high-cpu instance and alert",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2315.777063369751,
+      "tokens_per_sec": 1.7272819837758864,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:19:04.253842"
+    },
+    {
+      "test_id": "test_104",
+      "category": "complex",
+      "prompt": "Scale: list instances then resize multiple",
+      "expected_tool": "list_instances",
+      "extracted_tool": "list_instances",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2390.5231952667236,
+      "tokens_per_sec": 1.6732738707242278,
+      "response_length": 38,
+      "timestamp": "2026-01-14T21:19:06.644580"
+    },
+    {
+      "test_id": "test_105",
+      "category": "complex",
+      "prompt": "Backup production: snapshot all instances",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshot",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2343.4455394744873,
+      "tokens_per_sec": 2.1336104960737594,
+      "response_length": 59,
+      "timestamp": "2026-01-14T21:19:08.988271"
+    },
+    {
+      "test_id": "test_106",
+      "category": "complex",
+      "prompt": "Setup: create VPC, subnet, instance, monitor",
+      "expected_tool": "create_vpc",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": false,
+      "latency_ms": 3528.996467590332,
+      "tokens_per_sec": 6.8008002332707544,
+      "response_length": 320,
+      "timestamp": "2026-01-14T21:19:12.517493"
+    },
+    {
+      "test_id": "test_107",
+      "category": "complex",
+      "prompt": "Disaster recovery: terminate old, create new",
+      "expected_tool": "terminate_resource",
+      "extracted_tool": "terminate_resource",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2379.830837249756,
+      "tokens_per_sec": 2.1009896677270703,
+      "response_length": 71,
+      "timestamp": "2026-01-14T21:19:14.897662"
+    },
+    {
+      "test_id": "test_108",
+      "category": "complex",
+      "prompt": "Performance review: logs, metrics, cost trend",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2304.7642707824707,
+      "tokens_per_sec": 1.7355354084181436,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:19:17.202643"
+    },
+    {
+      "test_id": "test_109",
+      "category": "complex",
+      "prompt": "Cost optimization: analyze usage and resources",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2313.0671977996826,
+      "tokens_per_sec": 1.72930557478184,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:19:19.515926"
+    },
+    {
+      "test_id": "test_110",
+      "category": "complex",
+      "prompt": "Infrastructure as Code: create VPC with subnets",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "vpc_cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2468.709945678711,
+      "tokens_per_sec": 2.0253493160474845,
+      "response_length": 59,
+      "timestamp": "2026-01-14T21:19:21.984856"
+    },
+    {
+      "test_id": "test_111",
+      "category": "complex",
+      "prompt": "Monitoring dashboard: list, metrics, topology",
+      "expected_tool": "list_instances",
+      "extracted_tool": "list_instances",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "status"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2386.5716457366943,
+      "tokens_per_sec": 2.0950554779831823,
+      "response_length": 53,
+      "timestamp": "2026-01-14T21:19:24.371697"
+    },
+    {
+      "test_id": "test_112",
+      "category": "complex",
+      "prompt": "Incident response: check logs and CPU, stop if needed",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "start_instances",
+      "tool_correct": false,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2380.514144897461,
+      "tokens_per_sec": 2.1003865953568495,
+      "response_length": 65,
+      "timestamp": "2026-01-14T21:19:26.752442"
+    },
+    {
+      "test_id": "test_113",
+      "category": "complex",
+      "prompt": "Capacity planning: analyze resources and cost trends",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2337.4767303466797,
+      "tokens_per_sec": 1.7112469818712357,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:19:29.090121"
+    },
+    {
+      "test_id": "test_114",
+      "category": "complex",
+      "prompt": "Maintenance window: stop servers, backup, restart",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "list_instances",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [
+        "status"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2339.0228748321533,
+      "tokens_per_sec": 2.137644763460809,
+      "response_length": 53,
+      "timestamp": "2026-01-14T21:19:31.429360"
+    },
+    {
+      "test_id": "test_115",
+      "category": "complex",
+      "prompt": "Multi-region setup: create VPCs in multiple regions",
+      "expected_tool": "create_vpc",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": false,
+      "latency_ms": 3757.575035095215,
+      "tokens_per_sec": 7.451614335970405,
+      "response_length": 315,
+      "timestamp": "2026-01-14T21:19:35.187175"
+    },
+    {
+      "test_id": "test_116",
+      "category": "edge",
+      "prompt": "start instance named test-server-001",
+      "expected_tool": "start_instances",
+      "extracted_tool": "start_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2401.2115001678467,
+      "tokens_per_sec": 2.0822822144781896,
+      "response_length": 71,
+      "timestamp": "2026-01-14T21:19:37.588627"
+    },
+    {
+      "test_id": "test_117",
+      "category": "edge",
+      "prompt": "stop i-12345 and i-67890",
+      "expected_tool": "stop_instances",
+      "extracted_tool": "stop_instances",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_id"
+      ],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2543.525457382202,
+      "tokens_per_sec": 2.3589305869087718,
+      "response_length": 75,
+      "timestamp": "2026-01-14T21:19:40.132429"
+    },
+    {
+      "test_id": "test_118",
+      "category": "edge",
+      "prompt": "Create instance with special chars name@prod#1",
+      "expected_tool": "create_instance",
+      "extracted_tool": "create_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "name"
+      ],
+      "extracted_args": [
+        "name",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2464.06888961792,
+      "tokens_per_sec": 2.840829665718244,
+      "response_length": 81,
+      "timestamp": "2026-01-14T21:19:42.596736"
+    },
+    {
+      "test_id": "test_119",
+      "category": "edge",
+      "prompt": "resize to instance type t2.micro.nano",
+      "expected_tool": "resize_instance",
+      "extracted_tool": "resize_instance",
+      "tool_correct": true,
+      "expected_args": [
+        "instance_type"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "instance_type"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2440.103769302368,
+      "tokens_per_sec": 2.8687304564925604,
+      "response_length": 104,
+      "timestamp": "2026-01-14T21:19:45.037078"
+    },
+    {
+      "test_id": "test_120",
+      "category": "edge",
+      "prompt": "Get metric DiskReadBytes for web-server",
+      "expected_tool": "get_metric",
+      "extracted_tool": "get_metric",
+      "tool_correct": true,
+      "expected_args": [
+        "name",
+        "metric_name"
+      ],
+      "extracted_args": [
+        "instance_id",
+        "metric_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2435.7521533966064,
+      "tokens_per_sec": 2.8738556138557216,
+      "response_length": 93,
+      "timestamp": "2026-01-14T21:19:47.473043"
+    },
+    {
+      "test_id": "test_121",
+      "category": "edge",
+      "prompt": "Cost trend for year 2025",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "start_date",
+        "end_date"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2597.515821456909,
+      "tokens_per_sec": 2.6948825266726577,
+      "response_length": 94,
+      "timestamp": "2026-01-14T21:19:52.071207"
+    },
+    {
+      "test_id": "test_122",
+      "category": "edge",
+      "prompt": "Cost trend January 2025 to December 2025",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2329.9622535705566,
+      "tokens_per_sec": 1.716766009350662,
+      "response_length": 42,
+      "timestamp": "2026-01-14T21:19:54.401407"
+    },
+    {
+      "test_id": "test_123",
+      "category": "edge",
+      "prompt": "Create VPC 0.0.0.0/0",
+      "expected_tool": "create_vpc",
+      "extracted_tool": "create_vpc",
+      "tool_correct": true,
+      "expected_args": [
+        "cidr"
+      ],
+      "extracted_args": [
+        "vpc_cidr_block"
+      ],
+      "args_correct": false,
+      "json_valid": true,
+      "latency_ms": 2469.541311264038,
+      "tokens_per_sec": 2.0246674867085916,
+      "response_length": 63,
+      "timestamp": "2026-01-14T21:19:56.871171"
+    },
+    {
+      "test_id": "test_124",
+      "category": "edge",
+      "prompt": "Create subnet 10.0.0.0/32",
+      "expected_tool": "create_subnet",
+      "extracted_tool": "create_subnet",
+      "tool_correct": true,
+      "expected_args": [
+        "cidr"
+      ],
+      "extracted_args": [
+        "vpc_id",
+        "cidr"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2534.586191177368,
+      "tokens_per_sec": 2.761792052827509,
+      "response_length": 72,
+      "timestamp": "2026-01-14T21:19:59.406063"
+    },
+    {
+      "test_id": "test_125",
+      "category": "edge",
+      "prompt": "List terminated instances",
+      "expected_tool": "list_instances",
+      "extracted_tool": "list_instances",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2377.984046936035,
+      "tokens_per_sec": 2.102621338626034,
+      "response_length": 61,
+      "timestamp": "2026-01-14T21:20:01.784253"
+    },
+    {
+      "test_id": "test_126",
+      "category": "edge",
+      "prompt": "Reboot all instances",
+      "expected_tool": "reboot_instances",
+      "extracted_tool": "reboot_instances",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "instance_id"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2384.387254714966,
+      "tokens_per_sec": 2.0969748056289244,
+      "response_length": 60,
+      "timestamp": "2026-01-14T21:20:04.168867"
+    },
+    {
+      "test_id": "test_127",
+      "category": "edge",
+      "prompt": "Terminate all old instances",
+      "expected_tool": "terminate_resource",
+      "extracted_tool": "list_instances",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [
+        "status"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2349.677324295044,
+      "tokens_per_sec": 2.127951760993443,
+      "response_length": 53,
+      "timestamp": "2026-01-14T21:20:06.518762"
+    },
+    {
+      "test_id": "test_128",
+      "category": "edge",
+      "prompt": "Snapshot all production instances",
+      "expected_tool": "create_snapshot",
+      "extracted_tool": "create_snapshots",
+      "tool_correct": false,
+      "expected_args": [],
+      "extracted_args": [
+        "instance_ids"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2354.733943939209,
+      "tokens_per_sec": 2.1233821395701096,
+      "response_length": 58,
+      "timestamp": "2026-01-14T21:20:08.873743"
+    },
+    {
+      "test_id": "test_129",
+      "category": "edge",
+      "prompt": "Get logs for multiple instances",
+      "expected_tool": "get_recent_logs",
+      "extracted_tool": "get_recent_logs",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "instance_id_or_name"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2467.6201343536377,
+      "tokens_per_sec": 2.4314925609778366,
+      "response_length": 89,
+      "timestamp": "2026-01-14T21:20:11.341586"
+    },
+    {
+      "test_id": "test_130",
+      "category": "edge",
+      "prompt": "Monitor high memory usage",
+      "expected_tool": "analyze_high_cpu",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2318.005084991455,
+      "tokens_per_sec": 1.72562175376537,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:20:13.659811"
+    },
+    {
+      "test_id": "test_131",
+      "category": "edge",
+      "prompt": "cost trend for January to February",
+      "expected_tool": "analyze_cost_trend",
+      "extracted_tool": "analyze_cost_trend",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [
+        "time_range"
+      ],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2393.2559490203857,
+      "tokens_per_sec": 2.9248856574931987,
+      "response_length": 77,
+      "timestamp": "2026-01-14T21:20:16.053290"
+    },
+    {
+      "test_id": "test_132",
+      "category": "edge",
+      "prompt": "Resource usage by instance type",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2323.4684467315674,
+      "tokens_per_sec": 1.721564157941037,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:20:18.376985"
+    },
+    {
+      "test_id": "test_133",
+      "category": "edge",
+      "prompt": "CPU utilization above 90%",
+      "expected_tool": "analyze_high_cpu",
+      "extracted_tool": "analyze_high_cpu",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2305.687665939331,
+      "tokens_per_sec": 1.7348403511411468,
+      "response_length": 40,
+      "timestamp": "2026-01-14T21:20:20.682876"
+    },
+    {
+      "test_id": "test_134",
+      "category": "edge",
+      "prompt": "Network in/out metrics",
+      "expected_tool": "get_metric",
+      "extracted_tool": null,
+      "tool_correct": false,
+      "expected_args": [
+        "metric_name"
+      ],
+      "extracted_args": [],
+      "args_correct": false,
+      "json_valid": false,
+      "latency_ms": 2702.9566764831543,
+      "tokens_per_sec": 4.809548045333245,
+      "response_length": 180,
+      "timestamp": "2026-01-14T21:20:23.386061"
+    },
+    {
+      "test_id": "test_135",
+      "category": "edge",
+      "prompt": "Overall infrastructure analysis",
+      "expected_tool": "analyze_resource_usage",
+      "extracted_tool": "analyze_resource_usage",
+      "tool_correct": true,
+      "expected_args": [],
+      "extracted_args": [],
+      "args_correct": true,
+      "json_valid": true,
+      "latency_ms": 2324.4011402130127,
+      "tokens_per_sec": 1.7208733599371029,
+      "response_length": 46,
+      "timestamp": "2026-01-14T21:20:25.710675"
+    }
+  ]
+}

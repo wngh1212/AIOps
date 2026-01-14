@@ -1,0 +1,136 @@
+test_id,category,prompt,expected_tool,extracted_tool,tool_correct,expected_args,extracted_args,args_correct,json_valid,latency_ms,tokens_per_sec,response_length,timestamp
+test_001,instance,Launch a t2.micro instance,create_instance,create_instance,True,['instance_type'],"['name', 'instance_type']",True,True,12482.248783111572,0.5607963854614858,90,2026-01-14T18:53:30.700353
+test_002,instance,Create a new instance named web-server with t2.small,create_instance,create_instance,True,"['name', 'instance_type']","['name', 'instance_type']",True,True,2614.0363216400146,2.677851084949074,88,2026-01-14T18:53:33.314809
+test_003,instance,Make an instance for production,create_instance,create_instance,True,['name'],"['name', 'instance_type']",True,True,2619.8272705078125,3.43534098652828,100,2026-01-14T18:53:35.934826
+test_004,instance,Show all instances,list_instances,list_instances,True,[],['status'],True,True,2494.6346282958984,3.607742752351658,57,2026-01-14T18:53:38.429646
+test_005,instance,List running instances,list_instances,,False,[],[],True,False,2403.9652347564697,2.079896966773947,55,2026-01-14T18:53:40.833810
+test_006,instance,Start web-server,start_instances,start_instances,True,['instance_id'],['instance_id'],True,True,2442.7804946899414,2.046847848535258,66,2026-01-14T18:53:43.276772
+test_007,instance,Start the database instance,start_instances,start_instances,True,['name'],['instance_id'],True,True,2573.0690956115723,3.497768487970146,77,2026-01-14T18:53:45.850034
+test_008,instance,Start i-0123456789abcdef,start_instances,create_instance,False,['instance_id'],"['name', 'instance_type']",True,True,2714.137077331543,4.052853517190394,94,2026-01-14T18:53:48.564414
+test_009,instance,Stop web-server,stop_instances,stop_instances,True,['instance_id'],['instance_id'],True,True,2578.7885189056396,3.490010884575882,69,2026-01-14T18:53:51.143390
+test_010,instance,Stop the database instance,stop_instances,stop_instances,True,['name'],['instance_id'],True,True,2419.9438095092773,2.0661636771698073,63,2026-01-14T18:53:53.563517
+test_011,instance,Stop i-abcd1234,stop_instances,stop_instances,True,['instance_id'],['instance_id'],True,True,2667.949676513672,3.373376971547941,69,2026-01-14T18:53:56.231678
+test_012,instance,Reboot web-server,reboot_instances,reboot_instances,True,['instance_id'],['instance_id'],True,True,2477.4065017700195,2.0182396374707485,67,2026-01-14T18:53:58.709315
+test_013,instance,Reboot the app server,reboot_instances,reboot_instances,True,['name'],['instance_id'],True,True,2468.604564666748,2.02543577516028,67,2026-01-14T18:54:01.178152
+test_014,instance,Reboot i-xyz123 instance,reboot_instances,reboot_instances,True,['instance_id'],['instance_id'],True,True,2553.5244941711426,1.9580779473286265,65,2026-01-14T18:54:03.731917
+test_015,instance,Terminate i-0123456789abcdef,terminate_resource,terminate_resource,True,['instance_id'],['instance_id'],True,True,2679.5408725738525,2.612387842875522,79,2026-01-14T18:54:06.411708
+test_016,instance,Delete the web-server instance,terminate_resource,terminate_resource,True,['name'],['instance_id'],True,True,2455.0609588623047,2.036609307785596,69,2026-01-14T18:54:08.866982
+test_017,instance,Terminate the old-app instance,terminate_resource,terminate_resource,True,['name'],['instance_id'],True,True,2450.528383255005,2.0403762854436174,66,2026-01-14T18:54:11.317727
+test_018,instance,Terminate resource i-xyz123,terminate_resource,terminate_resource,True,['instance_id'],['instance_id'],True,True,2634.8319053649902,3.4157776751049607,71,2026-01-14T18:54:13.952937
+test_019,instance,Resize i-0123456789abcdef to t2.large,resize_instance,resize_instance,True,"['instance_id', 'instance_type']","['instance_id', 'instance_type']",True,True,2892.759084701538,3.802598031123263,107,2026-01-14T18:54:16.845937
+test_020,instance,Change instance type of my-server to t3.xlarge,resize_instance,resize_instance,True,"['name', 'instance_type']","['instance_id', 'instance_type']",True,True,2627.6049613952637,2.6640229801830584,95,2026-01-14T18:54:19.473767
+test_021,instance,Scale up AIOpsmake to t3.large,resize_instance,resize_instance,True,"['name', 'instance_type']","['instance_id', 'instance_type']",True,True,2847.726821899414,3.862730060836059,98,2026-01-14T18:54:24.321895
+test_022,instance,Resize web-server instance to t2.medium,resize_instance,resize_instance,True,"['name', 'instance_type']","['instance_id', 'instance_type']",True,True,2597.6955890655518,2.6946960334632797,96,2026-01-14T18:54:26.919898
+test_023,instance,Change i-abc123 type to t3.small,resize_instance,resize_instance,True,"['instance_id', 'instance_type']","['instance_id', 'instance_type']",True,True,2656.942129135132,2.63460762778397,93,2026-01-14T18:54:29.577056
+test_024,instance,Upgrade prod-db to t3.xlarge,resize_instance,resize_instance,True,"['name', 'instance_type']","['instance_id', 'instance_type']",True,True,2637.7203464508057,2.653806727244181,93,2026-01-14T18:54:32.215013
+test_025,instance,Create a snapshot of i-0123456789abcdef,create_snapshot,create_snapshot,True,['instance_id'],['instance_id'],True,True,2647.0346450805664,1.88890614230998,74,2026-01-14T18:54:34.862275
+test_026,instance,Backup my-app-server,create_snapshot,create_snapshot,True,['name'],['instance_id'],True,True,2476.3875007629395,2.8266981632896306,71,2026-01-14T18:54:37.338882
+test_027,instance,Create snapshot of web-server,create_snapshot,create_snapshot,True,['name'],['instance_id'],True,True,2621.6177940368652,3.4329947029164245,70,2026-01-14T18:54:39.960743
+test_028,instance,Take snapshot from i-xyz789,create_snapshot,create_snapshot,True,['instance_id'],['instance_id'],True,True,2624.8743534088135,3.4287355462603686,68,2026-01-14T18:54:42.585864
+test_029,instance,Backup the database instance,create_snapshot,create_snapshot,True,['name'],['instance_id'],True,True,2597.160816192627,3.4653225722055114,71,2026-01-14T18:54:45.183243
+test_030,instance,Create snapshot of AIOpsmake,create_snapshot,create_snapshot,True,['name'],['instance_id'],True,True,2492.72084236145,2.0058403311873896,65,2026-01-14T18:54:47.676197
+test_031,network,Create a VPC with CIDR 10.0.0.0/16,create_vpc,create_vpc,True,['cidr'],['cidr'],True,True,2682.443618774414,3.355149736236404,59,2026-01-14T18:54:50.358912
+test_032,network,Create a new VPC,create_vpc,create_vpc,True,[],['cidr'],True,True,2744.1635131835938,3.2796879474426093,59,2026-01-14T18:54:53.103294
+test_033,network,Create production-vpc with 172.16.0.0/16,create_vpc,create_vpc,True,['cidr'],['cidr'],True,True,2607.093095779419,1.917844824219902,57,2026-01-14T18:54:55.710603
+test_034,network,Create a subnet in vpc-12345678 with CIDR 10.0.1.0/24,create_subnet,create_subnet,True,"['vpc_id', 'cidr']","['vpc_id', 'cidr']",True,True,2833.268880844116,2.470644437359044,84,2026-01-14T18:54:58.544110
+test_035,network,Add a subnet to my VPC,create_subnet,create_subnet,True,[],"['vpc_id', 'cidr']",True,True,2739.5622730255127,2.555152722361501,78,2026-01-14T18:55:01.283903
+test_036,network,Create subnet 10.0.2.0/24 in vpc-abc123,create_subnet,create_subnet,True,"['vpc_id', 'cidr']","['vpc_id', 'cidr']",True,True,2960.9148502349854,3.7150679963414057,86,2026-01-14T18:55:04.245054
+test_037,network,Show network topology,generate_topology,generate_topology,True,[],[],True,True,2367.854356765747,2.533939633092722,43,2026-01-14T18:55:06.613100
+test_038,network,Generate VPC topology,generate_topology,generate_topology,True,[],"['vpc_id', 'status']",True,True,2775.5792140960693,3.963136755072725,88,2026-01-14T18:55:09.388902
+test_039,network,Display the infrastructure layout,generate_topology,list_instances,False,[],['status'],True,True,2530.8077335357666,3.556176899865162,57,2026-01-14T18:55:11.919960
+test_040,network,What is the network structure,generate_topology,generate_topology,True,[],[],True,True,2315.948486328125,1.7271541330100542,41,2026-01-14T18:55:14.236094
+test_041,network,Create VPC with name production-vpc,create_vpc,create_vpc,True,[],['cidr'],True,True,2575.350284576416,3.4946702411319888,62,2026-01-14T18:55:18.812134
+test_042,network,Set up subnet in default VPC,create_subnet,create_subnet,True,[],"['vpc_id', 'cidr']",True,True,2808.7916374206543,3.916274832725373,83,2026-01-14T18:55:21.621106
+test_043,monitoring,What is the CPU usage of i-0123456789abcdef,get_metric,get_metric,True,['instance_id'],"['instance_id', 'metric_name']",True,True,2909.2538356781006,3.781038239118133,106,2026-01-14T18:55:24.530592
+test_044,monitoring,Get CPU utilization for my-server,get_metric,get_metric,True,['name'],"['instance_id', 'metric_name']",True,True,2599.451780319214,2.6928754951324376,93,2026-01-14T18:55:27.130231
+test_045,monitoring,Check CPU metric for web-server,get_metric,get_metric,True,['name'],"['instance_id', 'metric_name']",True,True,2720.522165298462,4.04334143654853,98,2026-01-14T18:55:29.850967
+test_046,monitoring,Get metrics for i-abc123,get_metric,get_metric,True,['instance_id'],"['instance_id', 'metric_name']",True,True,2842.1761989593506,3.870273772620993,96,2026-01-14T18:55:32.693330
+test_047,monitoring,Get CPUUtilization metric from i-12345,get_metric,get_metric,True,"['instance_id', 'metric_name']","['instance_id', 'metric_name']",True,True,2780.1287174224854,3.9566513345462386,95,2026-01-14T18:55:35.473662
+test_048,monitoring,Check NetworkIn for my-app-instance,get_metric,list_instances,False,"['name', 'metric_name']",['status'],False,True,2532.9182147979736,3.5532138177299353,57,2026-01-14T18:55:38.006766
+test_049,monitoring,Monitor web-server performance,get_metric,list_instances,False,['name'],['status'],False,True,2406.707525253296,2.0775270561693078,57,2026-01-14T18:55:40.413733
+test_050,monitoring,Instance CPU usage,get_metric,analyze_high_cpu,False,[],['instance_id'],True,True,2583.462715148926,3.483696492783016,71,2026-01-14T18:55:42.997475
+test_051,monitoring,Show recent logs of i-xyz,get_recent_logs,get_recent_logs,True,['instance_id'],['instance_id'],True,True,2471.602439880371,2.022979067880353,61,2026-01-14T18:55:45.469305
+test_052,monitoring,Retrieve logs from web-server,get_recent_logs,get_recent_logs,True,['name'],['instance_id'],True,True,2608.600616455078,3.450125689317066,70,2026-01-14T18:55:48.078122
+test_053,monitoring,Get logs from database instance,get_recent_logs,get_recent_logs,True,['name'],['instance_id'],True,True,2496.0083961486816,2.0031983897630132,66,2026-01-14T18:55:50.574367
+test_054,monitoring,Display instance logs,get_recent_logs,get_recent_logs,True,[],['instance_id'],True,True,2487.3690605163574,2.010156063838006,66,2026-01-14T18:55:53.061947
+test_055,monitoring,Fetch logs from i-prod123,get_recent_logs,get_recent_logs,True,['instance_id'],['instance_id'],True,True,2664.234161376953,3.378081450373919,69,2026-01-14T18:55:55.726389
+test_056,monitoring,Check instance health,get_metric,list_instances,False,[],['status'],True,True,2515.5868530273438,3.577694003754667,57,2026-01-14T18:55:58.242180
+test_057,monitoring,Monitor instances,list_instances,list_instances,True,[],['status'],True,True,2521.9459533691406,3.568672829002001,57,2026-01-14T18:56:00.764448
+test_058,monitoring,Get performance metrics of web server,get_metric,get_metric,True,['name'],"['instance_id', 'metric_name']",True,True,2757.502794265747,3.9891165379322926,98,2026-01-14T18:56:03.522194
+test_059,monitoring,What is i-0123456789abcdef doing,get_metric,list_instances,False,['instance_id'],['status'],False,True,2505.202054977417,3.592524595817933,57,2026-01-14T18:56:06.027618
+test_060,monitoring,Get instance info,list_instances,,False,[],[],True,False,2397.5789546966553,2.0854370573304464,51,2026-01-14T18:56:08.425413
+test_061,cost,What is my monthly cost,get_cost,get_cost,True,[],[],True,True,2414.371967315674,2.899304703153375,35,2026-01-14T18:56:12.840500
+test_062,cost,Show AWS billing,get_cost,list_instances,False,[],['status'],True,True,2516.3190364837646,3.5766529877611837,57,2026-01-14T18:56:15.357053
+test_063,cost,How much have I spent,get_cost,get_cost,True,[],[],True,True,2308.4425926208496,1.7327699691499239,32,2026-01-14T18:56:17.665813
+test_064,cost,Get cost estimate,get_cost,get_cost,True,[],[],True,True,2358.8950634002686,2.5435637613108573,34,2026-01-14T18:56:20.024913
+test_065,cost,Calculate my bill,get_cost,get_cost,True,[],[],True,True,2314.8465156555176,1.7279763357732947,32,2026-01-14T18:56:22.339964
+test_066,cost,analyze cost trend for last 3 months,analyze_cost_trend,analyze_cost_trend,True,[],['last_3_months'],True,True,2589.8818969726562,3.475061936422741,67,2026-01-14T18:56:24.930086
+test_067,cost,analyze cost trend for last 3 month,analyze_cost_trend,analyze_cost_trend,True,[],[],True,True,2358.142852783203,1.696250078861419,42,2026-01-14T18:56:27.288494
+test_068,cost,Cost difference between January and December,analyze_cost_trend,analyze_cost_trend,True,[],[],True,True,2381.7949295043945,1.6794057080440266,42,2026-01-14T18:56:29.670499
+test_069,cost,Cost comparison for last quarter,analyze_cost_trend,analyze_cost_trend,True,[],[],True,True,2393.386125564575,1.6712723272165042,42,2026-01-14T18:56:32.064121
+test_070,cost,Analyze cost trends for Q4,analyze_cost_trend,analyze_cost_trend,True,[],[],True,True,2360.7263565063477,1.6943937568095029,42,2026-01-14T18:56:34.425064
+test_071,cost,Cost trend analysis for the last 6 months,analyze_cost_trend,analyze_cost_trend,True,[],['last_6_months'],True,True,2591.038465499878,3.4735107640571705,67,2026-01-14T18:56:37.016351
+test_072,cost,Resource usage analysis,analyze_resource_usage,analyze_resource_usage,True,[],[],True,True,2364.753484725952,1.6915082378929465,46,2026-01-14T18:56:39.381312
+test_073,cost,Which instance uses the most resources,analyze_resource_usage,analyze_resource_usage,True,[],[],True,True,2353.1174659729004,1.6998726403767495,46,2026-01-14T18:56:41.734686
+test_074,cost,Optimize resource usage,analyze_resource_usage,analyze_resource_usage,True,[],[],True,True,2337.0916843414307,1.7115289172436383,46,2026-01-14T18:56:44.071991
+test_075,cost,Analyze resource utilization,analyze_resource_usage,analyze_resource_usage,True,[],['instance_ids'],True,True,2785.0372791290283,3.5906162100377075,93,2026-01-14T18:56:46.857254
+test_076,cost,High CPU alert,analyze_high_cpu,analyze_high_cpu,True,[],['instance_id'],True,True,2593.6272144317627,3.470043786524583,71,2026-01-14T18:56:49.451095
+test_077,cost,Analyze high cpu instances,analyze_high_cpu,analyze_high_cpu,True,[],['instances'],True,True,2483.961820602417,2.0129133864011592,67,2026-01-14T18:56:51.935270
+test_078,cost,Which instances have high CPU usage,analyze_high_cpu,analyze_high_cpu,True,[],['instance_id'],True,True,2780.4315090179443,3.956220451510143,99,2026-01-14T18:56:54.715991
+test_079,cost,Check for CPU spikes,analyze_high_cpu,analyze_high_cpu,True,[],['instance_id'],True,True,2625.131368637085,3.4283998536319413,70,2026-01-14T18:56:57.341340
+test_080,cost,Monitor high CPU utilization,analyze_high_cpu,analyze_high_cpu,True,[],['instance_id'],True,True,2639.3802165985107,3.4098914371642555,70,2026-01-14T18:56:59.980970
+test_081,naming,Stop AIOpsmake,stop_instances,stop_instances,True,['name'],['instance_id'],True,True,2473.466396331787,2.0214545899694154,64,2026-01-14T18:57:04.455100
+test_082,naming,Start newserver,start_instances,create_instance,False,['name'],"['name', 'instance_type']",True,True,2607.544422149658,2.6845180241375153,87,2026-01-14T18:57:07.062866
+test_083,naming,Terminate AIOpsmake instance,terminate_resource,terminate_resource,True,['name'],['instance_id'],True,True,2571.0625648498535,3.500498246539398,72,2026-01-14T18:57:09.634149
+test_084,naming,Resize AIOpsmake to t3.large,resize_instance,resize_instance,True,"['name', 'instance_type']","['instance_id', 'instance_type']",True,True,2731.821298599243,4.026617702131656,98,2026-01-14T18:57:12.366188
+test_085,naming,Get metrics for AIOpsmake,get_metric,get_metric,True,['name'],"['instance_id', 'metric_name']",True,True,2762.7241611480713,3.9815773701522432,97,2026-01-14T18:57:15.129135
+test_086,naming,Create snapshot of new-instance,create_snapshot,create_snapshot,True,['name'],['instance_id'],True,True,2583.0161571502686,3.4842987625479336,72,2026-01-14T18:57:17.712358
+test_087,naming,Reboot web-server,reboot_instances,reboot_instances,True,['name'],['instance_id'],True,True,2480.160713195801,2.0159983880872265,67,2026-01-14T18:57:20.192731
+test_088,naming,Get logs from newserver,get_recent_logs,get_recent_logs,True,['name'],['instance_id'],True,True,2478.1408309936523,2.01764158738112,65,2026-01-14T18:57:22.671090
+test_089,naming,Check CPU for AIOpsmake,get_metric,analyze_high_cpu,False,"['name', 'metric_name']",['instance_id'],False,True,2503.4213066101074,1.9972666953012874,66,2026-01-14T18:57:25.174723
+test_090,naming,Backup test instance,create_snapshot,start_instances,False,['name'],['instance_id'],True,True,2478.1570434570312,2.0176283876767536,76,2026-01-14T18:57:27.653104
+test_091,naming,Monitor production-db,get_metric,list_instances,False,['name'],['status'],False,True,2510.7321739196777,3.5846117293942497,57,2026-01-14T18:57:30.164100
+test_092,naming,Stop old-app server,stop_instances,stop_instances,True,['name'],['instance_id'],True,True,2473.982334136963,2.0210330247747006,62,2026-01-14T18:57:32.638296
+test_093,complex,Launch t2.micro and show topology,create_instance,create_instance,True,['instance_type'],"['name', 'instance_type']",True,True,2747.288703918457,4.003947595427705,90,2026-01-14T18:57:35.385861
+test_094,complex,Create VPC and subnet for production,create_vpc,create_vpc,True,[],['cidr'],True,True,2681.408643722534,3.356444763117314,59,2026-01-14T18:57:38.067488
+test_095,complex,"Setup infrastructure: create VPC, subnet, instance",create_vpc,create_vpc,True,[],['cidr'],True,True,2675.6482124328613,3.3636708884897297,59,2026-01-14T18:57:40.743448
+test_096,complex,Start web-server and get CPU metrics,start_instances,,False,['name'],[],False,False,3207.5390815734863,6.235309840773265,170,2026-01-14T18:57:43.951218
+test_097,complex,Stop old-app and create snapshot,stop_instances,stop_instances,True,['name'],['instance_id'],True,True,2454.4029235839844,2.0371553309180657,62,2026-01-14T18:57:46.405882
+test_098,complex,Resize AIOpsmake to t3.large then monitor,resize_instance,resize_instance,True,"['name', 'instance_type']","['instance_id', 'instance_type']",True,True,2628.620147705078,2.662994121121442,94,2026-01-14T18:57:49.034722
+test_099,complex,"List instances, show topology, and get cost",list_instances,,False,[],[],True,False,2870.4473972320557,4.528910723999253,128,2026-01-14T18:57:51.905393
+test_100,complex,Create snapshot of web-server and check logs,create_snapshot,create_snapshot,True,['name'],['instance_id'],True,True,2576.8401622772217,3.4926496923450863,70,2026-01-14T18:57:54.482450
+test_101,complex,Get metrics for AIOpsmake and analyze cost trend,get_metric,analyze_cost_trend,False,['name'],[],False,True,2456.3260078430176,2.442672503911157,44,2026-01-14T18:57:58.939377
+test_102,complex,"Audit: list all instances, topology, cost",list_instances,list_instances,True,[],['status'],True,True,2567.131757736206,3.5058582298621634,57,2026-01-14T18:58:01.506713
+test_103,complex,Emergency: stop high-cpu instance and alert,stop_instances,stop_instances,True,[],['instance_id'],True,True,2558.336019515991,3.5179116157316583,67,2026-01-14T18:58:04.065256
+test_104,complex,Scale: list instances then resize multiple,list_instances,,False,[],[],True,False,4207.88311958313,9.03066908468803,302,2026-01-14T18:58:08.273366
+test_105,complex,Backup production: snapshot all instances,create_snapshot,create_snapshot,True,[],['instances'],True,True,2636.0604763031006,3.4141857066276042,97,2026-01-14T18:58:10.909652
+test_106,complex,"Setup: create VPC, subnet, instance, monitor",create_vpc,create_vpc,True,[],['cidr'],True,True,2669.1155433654785,3.3719034840477273,59,2026-01-14T18:58:13.578987
+test_107,complex,"Disaster recovery: terminate old, create new",terminate_resource,terminate_resource,True,[],['instance_id'],True,True,2465.8987522125244,2.0276582708490185,68,2026-01-14T18:58:16.045131
+test_108,complex,"Performance review: logs, metrics, cost trend",get_recent_logs,analyze_cost_trend,False,[],[],True,True,2384.4192028045654,1.6775573671337576,42,2026-01-14T18:58:18.429766
+test_109,complex,Cost optimization: analyze usage and resources,analyze_resource_usage,analyze_resource_usage,True,[],[],True,True,2345.09539604187,1.7056875412195738,46,2026-01-14T18:58:20.775062
+test_110,complex,Infrastructure as Code: create VPC with subnets,create_vpc,create_vpc,True,[],['cidr'],True,True,2673.0785369873047,3.366904442000966,59,2026-01-14T18:58:23.448349
+test_111,complex,"Monitoring dashboard: list, metrics, topology",list_instances,list_instances,True,[],['status'],True,True,2511.0180377960205,3.5842036435148477,57,2026-01-14T18:58:25.959611
+test_112,complex,"Incident response: check logs and CPU, stop if needed",get_recent_logs,start_instances,False,['name'],['instance_id'],True,True,2565.423011779785,3.508193369543438,70,2026-01-14T18:58:28.525301
+test_113,complex,Capacity planning: analyze resources and cost trends,analyze_resource_usage,analyze_resource_usage,True,[],"['instance_ids', 'metric_names']",True,True,2861.3269329071045,4.19385840254473,137,2026-01-14T18:58:31.386835
+test_114,complex,"Maintenance window: stop servers, backup, restart",stop_instances,stop_instances,True,[],['instance_id'],True,True,2468.6944484710693,2.025362030159965,64,2026-01-14T18:58:33.855733
+test_115,complex,Multi-region setup: create VPCs in multiple regions,create_vpc,create_vpc,True,[],['cidr'],True,True,2692.8796768188477,3.3421470990608384,59,2026-01-14T18:58:36.548821
+test_116,edge,start instance named test-server-001,start_instances,create_instance,False,['name'],"['name', 'instance_type']",True,True,2784.062385559082,3.951060887520677,97,2026-01-14T18:58:39.333154
+test_117,edge,stop i-12345 and i-67890,stop_instances,stop_instances,True,['instance_id'],['instance_id'],True,True,2666.050672531128,3.375779797709347,66,2026-01-14T18:58:41.999426
+test_118,edge,Create instance with special chars name@prod#1,create_instance,create_instance,True,['name'],"['name', 'instance_type']",True,True,2804.399013519287,3.922409024882631,109,2026-01-14T18:58:44.804043
+test_119,edge,resize to instance type t2.micro.nano,resize_instance,resize_instance,True,['instance_type'],"['instance_id', 'instance_type']",True,True,2832.3400020599365,3.883714522973864,104,2026-01-14T18:58:47.636616
+test_120,edge,Get metric DiskReadBytes for web-server,get_metric,get_metric,True,"['name', 'metric_name']","['instance_id', 'metric_name']",True,True,2627.4757385253906,2.664154000496532,93,2026-01-14T18:58:50.264824
+test_121,edge,Cost trend for year 2025,analyze_cost_trend,analyze_cost_trend,True,[],['time_range'],True,True,2636.2245082855225,4.172633994345909,73,2026-01-14T18:58:54.901655
+test_122,edge,Cost trend January 2025 to December 2025,analyze_cost_trend,analyze_cost_trend,True,[],['last_3_months'],True,True,2624.178886413574,3.429644239040489,67,2026-01-14T18:58:57.526058
+test_123,edge,Create VPC 0.0.0.0/0,create_vpc,create_vpc,True,['cidr'],['cidr'],True,True,2682.765007019043,3.3547477980564384,57,2026-01-14T18:59:00.209053
+test_124,edge,Create subnet 10.0.0.0/32,create_subnet,create_subnet,True,['cidr'],"['vpc_id', 'cidr']",True,True,2887.6662254333496,3.809304518339629,87,2026-01-14T18:59:03.097171
+test_125,edge,List terminated instances,list_instances,,False,[],[],True,False,2403.181552886963,2.0805752249527116,58,2026-01-14T18:59:05.500584
+test_126,edge,Reboot all instances,reboot_instances,reboot_instances,True,[],['instance_ids'],True,True,2451.291084289551,2.0397414375001217,61,2026-01-14T18:59:07.952124
+test_127,edge,Terminate all old instances,terminate_resource,terminate_resource,True,[],['instance_ids'],True,True,2672.992944717407,3.74112472678345,96,2026-01-14T18:59:10.625333
+test_128,edge,Snapshot all production instances,create_snapshot,list_instances,False,[],['status'],True,True,2501.32155418396,3.598097967430738,64,2026-01-14T18:59:13.126916
+test_129,edge,Get logs for multiple instances,get_recent_logs,get_recent_logs,True,[],['instance_ids'],True,True,2747.530698776245,4.003594938866168,102,2026-01-14T18:59:15.874665
+test_130,edge,Monitor high memory usage,analyze_high_cpu,analyze_resource_usage,False,[],['resource'],True,True,2434.795618057251,2.0535604561296,66,2026-01-14T18:59:18.309671
+test_131,edge,cost trend for January to February,analyze_cost_trend,analyze_cost_trend,True,[],[],True,True,2375.131368637085,1.6841173725457168,42,2026-01-14T18:59:20.685062
+test_132,edge,Resource usage by instance type,analyze_resource_usage,,False,[],[],True,False,2536.823034286499,2.759356843339608,80,2026-01-14T18:59:23.222113
+test_133,edge,CPU utilization above 90%,analyze_high_cpu,analyze_high_cpu,True,[],['instance_id'],True,True,2648.9579677581787,3.3975624036106273,71,2026-01-14T18:59:25.871283
+test_134,edge,Network in/out metrics,get_metric,get_metric,True,['metric_name'],"['instance_id', 'metric_name']",True,True,2644.4170475006104,2.647086247842828,97,2026-01-14T18:59:28.515960
+test_135,edge,Overall infrastructure analysis,analyze_resource_usage,analyze_resource_usage,True,[],"['instance_ids', 'metric_names']",True,True,2927.727222442627,4.440304376838083,144,2026-01-14T18:59:31.443935

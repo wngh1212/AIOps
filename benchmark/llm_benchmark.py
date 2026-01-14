@@ -692,8 +692,7 @@ class LLMBenchmark:
         expected_tool: str,
         expected_args: List[str],
     ) -> None:
-        """개별 테스트 실행"""
-
+   
         # LLM 프롬프트 생성
         llm_prompt = self._generate_improved_prompt(prompt)
 
@@ -752,7 +751,14 @@ class LLMBenchmark:
         args_status = "✓" if args_correct else "✗"
         json_status = "✓" if metrics.get("json_valid") else "✗"
 
-        tool_display = extracted_tool if extracted_tool else "UNKNOWN"
+        # [수정된 부분] tool_display가 리스트일 경우 문자열로 변환하여 에러 방지
+        if extracted_tool:
+            if isinstance(extracted_tool, list):
+                tool_display = str(extracted_tool[0]) if extracted_tool else "EMPTY_LIST"
+            else:
+                tool_display = str(extracted_tool)
+        else:
+            tool_display = "UNKNOWN"
 
         logger.info(
             f"[{idx:3d}/{total}] {status} Tool:{tool_display:25s} {args_status} Args "
@@ -848,7 +854,7 @@ User: {user_input}
             raise
 
     def _extract_intent(self, response: str) -> Tuple[str, Dict[str, Any]]:
-        """응답에서 의도 추출"""
+    
         try:
             match = re.search(r"\{.*\}", response, re.DOTALL)
             if match:
@@ -862,7 +868,7 @@ User: {user_input}
         return None, {}
 
     def _is_valid_json(self, response: str) -> bool:
-        """응답이 유효한 JSON인지 확인"""
+        #응답이 유효한 JSON인지 확인
         try:
             match = re.search(r"\{.*\}", response, re.DOTALL)
             if match:
