@@ -66,7 +66,6 @@ class MCPServer:
     logger = logging.getLogger(__name__)
 
     def get_cost_by_date(self, start_date, end_date):
-        """Human-friendly [start_date, end_date] → Cost Explorer-safe [Start, End)"""
         try:
             logger.info(f"Fetching cost for {start_date} ~ {end_date}")
 
@@ -83,8 +82,7 @@ class MCPServer:
 
             ce_end = end_dt + timedelta(days=1)
 
-            # End는 "다음 달 1일"을 넘어가면 안 됨 → 현재 달 기준 상한 설정
-            # 오늘이 2026-01-05면 upper_bound = 2026-02-01
+            # End는 다음 달 1일을 넘어가면 안 됨 → 현재 달 기준 상한 설정
             upper_bound = datetime(today.year, today.month, 1) + timedelta(days=32)
             upper_bound = upper_bound.replace(day=1)  # 다음 달 1일
 
@@ -215,20 +213,14 @@ class MCPServer:
             }
 
     def _normalize_args(self, args: dict) -> dict:
-        """
-        모든 파라미터를 정규화하고 이름→ID 변환 수행
-
-        이 함수는 모든 도구 호출의 전처리 단계입니다!
-        """
-
         normalized = args.copy()
 
-        # ===== 1단계: 문자열 정규화 =====
+        # 문자열 정규화
         for key in normalized:
             if isinstance(normalized[key], str):
                 normalized[key] = self._clean_str(normalized[key])
 
-        # ===== 2단계: instance_id 필드 처리 =====
+        # instance_id 필드 처리
         if "instance_id" in normalized and normalized["instance_id"]:
             try:
                 normalized["instance_id"] = self._resolve_id(normalized["instance_id"])
@@ -240,7 +232,7 @@ class MCPServer:
                 logger.warning(f"instance_id 변환 실패: {str(e)}")
                 # 변환 실패해도 계속 진행 (에러는 도구 실행 시 발생)
 
-        # ===== 3단계: name 필드 처리 =====
+        # name 필드 처리 \
         if "name" in normalized and normalized["name"]:
             try:
                 normalized["instance_id"] = self._resolve_id(normalized["name"])
@@ -253,7 +245,6 @@ class MCPServer:
             except ValueError as e:
                 logger.warning(f"name 변환 실패: {str(e)}")
 
-        # ===== 4단계: InstanceIds 리스트 처리 =====
         if "InstanceIds" in normalized and normalized["InstanceIds"]:
             try:
                 normalized["InstanceIds"] = [

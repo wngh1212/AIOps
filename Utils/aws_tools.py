@@ -21,16 +21,12 @@ class AWSTools:
         self.ec2_res = boto3.resource("ec2", region_name=self.region)
 
     def change_region(self, new_region):
-        """AWS 리전 변경"""
         if new_region == self.region:
             return
         self.region = new_region
         self._initialize_clients()  # 클라이언트 재초기화
 
     def execute_python_code(self, code_str):
-        """
-        LLM이 생성한 Python 코드를 샌드박스 환경에서 실행하고 결과 출력값을 반환
-        """
         old_stdout = sys.stdout
         redirected_output = sys.stdout = StringIO()
 
