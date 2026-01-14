@@ -97,7 +97,6 @@ class ChatOpsClient:
 
         text = user_input.lower()
 
-        # ===== 분석 도구 (규칙 기반) =====
         analysis_patterns = {
             "analyze_cost_trend": [
                 "cost difference",
@@ -257,7 +256,6 @@ class ChatOpsClient:
     def _generate_llm_prompt(self, user_input: str) -> str:
         return f"""[INST] <>
     You are an AWS Operations Agent. Analyze the user request and respond ONLY in JSON format.
-
     Available Tools:
     - create_instance: Launch a new EC2 instance (args: name, instance_type)
     - start_instances: Start a stopped instance (args: instance_id or name)
@@ -272,46 +270,33 @@ class ChatOpsClient:
     - generate_topology: Show VPC topology (args: {{}})
     - create_vpc: Create a new VPC (args: cidr)
     - create_subnet: Create a subnet (args: vpc_id, cidr)
-
     Important Rules:
     1. For instance operations (start, stop, terminate, etc.), always set either 'instance_id' or 'name'.
        - Use exact instance names when mentioned (e.g., "AIOpsmake", "newserver", "web-server")
        - Do NOT use 'InstanceIds' parameter - use 'instance_id' instead
-
     2. The MCP server will convert instance names to IDs automatically.
        - Always pass exactly what the user said for instance names
        - Example: "stop AIOpsmake" -> {{"tool": "stop_instances", "args": {{"instance_id": "AIOpsmake"}}}}
-
     3. For safety, terminate_resource is a CRITICAL action that requires confirmation.
-
     Format:
     {{"tool": "tool_name", "args": {{key: value}}}}
-
     Examples:
     - "launch a t2.micro instance"
       -> {{"tool": "create_instance", "args": {{"instance_type": "t2.micro"}}}}
-
     - "show instances"
       -> {{"tool": "list_instances", "args": {{"status": "all"}}}}
-
     - "show cost"
       -> {{"tool": "get_cost", "args": {{}}}}
-
     - "start web-server"
       -> {{"tool": "start_instances", "args": {{"instance_id": "web-server"}}}}
-
     - "stop AIOpsmake"
       -> {{"tool": "stop_instances", "args": {{"instance_id": "AIOpsmake"}}}}
-
     - "terminate the prod-server instance"
       -> {{"tool": "terminate_resource", "args": {{"instance_id": "prod-server"}}}}
-
     - "resize AIOpsmake to t3.large"
       -> {{"tool": "resize_instance", "args": {{"instance_id": "AIOpsmake", "instance_type": "t3.large"}}}}
-
     - "get cpu metric for web-server"
       -> {{"tool": "get_metric", "args": {{"instance_id": "web-server", "metric_name": "CPUUtilization"}}}}
-
     <>
     User: {user_input}
     [/INST]"""
