@@ -525,44 +525,33 @@ class MCPServer:
             return f"Error executing action: {str(e)}"
 
     def _clean_str(self, s: str) -> str:
-        """
-        문자열을 정규화합니다
-        - None → ValueError
-        - 타입 체크
-        - 공백 제거
-        """
         if s is None:
-            raise ValueError("입력값이 None입니다")
+            raise ValueError("Input value is None")
 
         if not isinstance(s, str):
-            raise TypeError(f"문자열이 아닙니다: {type(s)}")
+            raise TypeError(f"It's not a string: {type(s)}")
 
         cleaned = s.strip()
         if not cleaned:
-            raise ValueError("입력값이 비어있습니다")
+            raise ValueError("Input value is empty")
 
         return cleaned
 
     def _resolve_id(self, identifier: str) -> str:
         identifier = self._clean_str(identifier)
-        # ===== Case 1: 이미 Instance ID =====
         if identifier.startswith("i-") and len(identifier) == 19:
-            logger.debug(f"✓ Instance ID 형식: {identifier}")
+            logger.debug(f"Instance ID 형식: {identifier}")
             return self._validate_instance_id(identifier)
 
-        # ===== Case 2: 이름으로 검색 =====
-        logger.debug(f"이름으로 검색: {identifier}")
+        logger.debug(f"Search by name: {identifier}")
 
         try:
             # 정확한 일치 시도
             return self._search_exact(identifier)
         except ValueError as e:
-            logger.debug(f"정확한 일치 실패, 부분 일치 시도")
-            # 부분 일치 시도
             return self._search_partial(identifier)
 
     def _validate_instance_id(self, instance_id: str) -> str:
-        """Instance ID 유효성 검증"""
         try:
             response = self.ec2.describe_instances(
                 InstanceIds=[instance_id],
@@ -580,15 +569,11 @@ class MCPServer:
             return instance_id
 
         except self.ec2.exceptions.InvalidInstanceID.Malformed:
-            raise ValueError(f"잘못된 Instance ID 형식: {instance_id}")
+            raise ValueError(f"Invalid Instance ID format: {instance_id}")
         except Exception as e:
-            raise ValueError(f"Instance ID 검증 실패: {str(e)}")
+            raise ValueError(f"Instance ID verification failed: {str(e)}")
 
     def _search_exact(self, name: str) -> str:
-        """
-        정확한 Name 태그로 검색
-        AWS Filters를 사용하므로 매우 정확함
-        """
         try:
             response = self.ec2.describe_instances(
                 Filters=[
@@ -604,20 +589,20 @@ class MCPServer:
             for reservation in response["Reservations"]:
                 instances.extend(reservation["Instances"])
 
-            # ===== 결과 처리 =====
-
             if len(instances) == 0:
-                raise ValueError(f"정확한 일치 없음: {name}")
+                raise ValueError(f"No exact match: {name}")
 
             if len(instances) == 1:
                 instance_id = instances[0]["InstanceId"]
-                logger.info(f"✓ 정확한 일치 발견: {name} → {instance_id}")
+                logger.info(
+                    f"Identification of Accurate Matches: {name} → {instance_id}"
+                )
                 return instance_id
 
             # 여러 개 발견 (중복)
             ids = [inst["InstanceId"] for inst in instances]
             raise ValueError(
-                f"여러 인스턴스가 같은 이름 사용: {name}\nInstance IDs: {ids}"
+                f"Multiple instances use the same name: {name}\nInstance IDs: {ids}"
             )
 
         except ValueError:
@@ -626,12 +611,7 @@ class MCPServer:
             raise ValueError(f"정확한 검색 실패: {str(e)}")
 
     def _search_partial(self, name: str) -> str:
-        """
-        부분 일치로 검색
-        정확한 일치가 실패했을 때만 사용됩니다
-        """
-
-        # 정규화: 하이픈, 공백, 대소문자 무시
+        # 하이픈, 공백, 대소문자 무시
         normalized_input = (
             name.lower().replace("-", "").replace("_", "").replace(" ", "")
         )
@@ -671,7 +651,6 @@ class MCPServer:
                         .replace(" ", "")
                     )
 
-                    # ⚠️ 부분 일치 (양쪽 포함 관계 확인)
                     if (
                         normalized_input in normalized_tag
                         or normalized_tag in normalized_input
@@ -680,21 +659,18 @@ class MCPServer:
                             {"InstanceId": instance["InstanceId"], "Name": name_tag}
                         )
 
-            # ===== 결과 처리 =====
-
             if len(matching) == 0:
                 available = self._get_available_instances()
                 raise ValueError(
-                    f"인스턴스 없음: {name}\n"
-                    f"사용 가능한 인스턴스:\n"
-                    + "\n".join(f"  - {n}" for n in available)
+                    f"No Instances: {name}\n"
+                    f"Available Instances:\n" + "\n".join(f"  - {n}" for n in available)
                 )
 
             if len(matching) == 1:
                 instance_id = matching[0]["InstanceId"]
                 instance_name = matching[0]["Name"]
                 logger.warning(
-                    f"⚠️ 부분 일치 사용: '{name}' → {instance_name} ({instance_id})"
+                    f"Using Partial Match: '{name}' → {instance_name} ({instance_id})"
                 )
                 return instance_id
 
@@ -702,18 +678,14 @@ class MCPServer:
             matches_str = "\n".join(
                 f"  - {m['Name']} ({m['InstanceId']})" for m in matching
             )
-            raise ValueError(
-                f"여러 인스턴스 매칭: {name}\n{matches_str}\n"
-                f"더 정확한 이름을 사용하세요"
-            )
+            raise ValueError(f"Matching Multiple Instances: {name}\n{matches_str}\n")
 
         except ValueError:
             raise
         except Exception as e:
-            raise ValueError(f"부분 일치 검색 실패: {str(e)}")
+            raise ValueError(f"Partial match search failed: {str(e)}")
 
     def _get_available_instances(self) -> list:
-        """사용 가능한 모든 인스턴스 이름 반환 (디버깅용)"""
         try:
             response = self.ec2.describe_instances(
                 Filters=[
@@ -737,25 +709,23 @@ class MCPServer:
 
             return sorted(names) if names else ["(없음)"]
         except Exception as e:
-            logger.warning(f"인스턴스 목록 조회 실패: {str(e)}")
+            logger.warning(f"Instance list lookup failed: {str(e)}")
             return []
 
     def start_instances(self, instance_id: str) -> dict:
-        """EC2 인스턴스 시작"""
         try:
             self.ec2.start_instances(InstanceIds=[instance_id])
-            logger.info(f"✓ 시작됨: {instance_id}")
+            logger.info(f"running instance : {instance_id}")
             return {
                 "status": "success",
                 "action": "start_instances",
                 "instance_id": instance_id,
             }
         except Exception as e:
-            logger.error(f"시작 실패: {instance_id} | {str(e)}")
+            logger.error(f"start faild: {instance_id} | {str(e)}")
             return {"status": "error", "message": str(e)}
 
     def stop_instances(self, instance_id: str) -> dict:
-        """EC2 인스턴스 중지 (데이터 보존)"""
         try:
             self.ec2.stop_instances(InstanceIds=[instance_id])
             logger.info(f"✓ 중지됨: {instance_id}")
@@ -769,7 +739,6 @@ class MCPServer:
             return {"status": "error", "message": str(e)}
 
     def reboot_instances(self, instance_id: str) -> dict:
-        """EC2 인스턴스 재부팅"""
         try:
             self.ec2.reboot_instances(InstanceIds=[instance_id])
             logger.info(f"재부팅됨: {instance_id}")

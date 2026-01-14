@@ -117,7 +117,6 @@ class ChatOpsClient:
             if any(phrase in text for phrase in patterns):
                 return tool, {}
 
-        # ===== 조회 도구 (규칙 기반) =====
         if any(phrase in text for phrase in ["cost", "price", "billing", "bill"]):
             if not any(k in text for k in ["compare", "difference", "vs", "between"]):
                 return "get_cost", {}
@@ -130,7 +129,6 @@ class ChatOpsClient:
         if "topology" in text and "generate" in text:
             return "generate_topology", {}
 
-        # ===== 상태 변경 도구 (단순 패턴만) =====
         # 정규식으로 인스턴스 이름이 추출 가능한 경우만 즉시 처리
         # 그렇지 않으면 LLM에 위임
 
@@ -158,31 +156,20 @@ class ChatOpsClient:
     def _finalize_args(
         self, user_input: str, tool: str, args: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """
-        파라미터를 보정하고 정규화합니다
-
-        우선순위:
-        1. 정규식으로 instance_id 추출
-        2. 이름이면 MCP에 위임 (MCP가 ID로 변환할 것)
-        3. 컨텍스트 메모리 활용 (신중하게)
-        4. 기본값 설정
-        """
-
         text = user_input.lower()
 
-        # ===== Step 1: Instance ID 정규식 추출 =====
         if not args.get("instance_id"):
             id_match = self.INSTANCE_ID_PATTERN.search(text)
             if id_match:
                 args["instance_id"] = id_match.group(1)
 
-        # ===== Step 2: Instance Type 정규식 추출 =====
+        # Instance Type 정규식 추출
         if not args.get("instance_type"):
             type_match = self.INSTANCE_TYPE_PATTERN.search(text)
             if type_match:
                 args["instance_type"] = type_match.group(0)
 
-        # ===== Step 3: 인스턴스 이름 추출 (ID나 name이 없을 때) =====
+        # 인스턴스 이름 추출
         if not args.get("instance_id") and not args.get("name"):
             # 불용어 제거 후 남은 텍스트
             cleaned = self._clean_text_for_extraction(text)
@@ -199,13 +186,9 @@ class ChatOpsClient:
                     "create_snapshot",
                     "get_metric",
                 ]:
-                    # 이 도구들은 instance_id가 필요 → 이름으로 설정
                     # MCP 서버의 _normalize_args가 이를 ID로 변환할 것
                     args["instance_id"] = cleaned
 
-        # ===== Step 4: 컨텍스트 메모리 활용 (신중하게) =====
-        # 주의: create, list, cost 등은 이전 ID가 필요 없음
-        # terminate, stop, start 같은 위험한 작업도 신중해야 함
         context_ignore_tools = {
             "create_instance",
             "list_instances",
@@ -221,7 +204,7 @@ class ChatOpsClient:
             "stop_instances",
             "start_instances",
             "reboot_instances",
-            "terminate_resource",  # ← 위험! 명시 필수
+            "terminate_resource",
         }
 
         if (
@@ -232,13 +215,11 @@ class ChatOpsClient:
             # 컨텍스트 메모리 사용 시 사용자에게 알림
             args["instance_id"] = self.context_memory["instance_id"]
 
-        # ===== Step 5: 테스트 케이스 필터링 =====
         if args.get("instance_id") and (
             args["instance_id"].startswith("i-12345") or "abcde" in args["instance_id"]
         ):
             args["instance_id"] = None
 
-        # ===== Step 6: create_instance 기본값 =====
         if tool == "create_instance":
             if not args.get("name"):
                 args["name"] = "new-instance"
