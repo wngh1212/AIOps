@@ -234,7 +234,6 @@ JSON format: {{"action": "ACTION_NAME", "root_cause": "summary", "reason": "logi
             return None, None, None
 
     def _extract_action_from_text(self, raw_response):
-        """더 정교한 텍스트 기반 의도 추출"""
         text = raw_response.upper()
 
         # 부정형 제거
@@ -257,7 +256,6 @@ JSON format: {{"action": "ACTION_NAME", "root_cause": "summary", "reason": "logi
         return None
 
     def _execute_action(self, action, instance_id):
-        """결정된 액션 실행"""
         try:
             if action == "START_INSTANCE":
                 self.server.call_tool(

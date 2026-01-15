@@ -91,10 +91,6 @@ class ChatOpsClient:
     def _rule_based_routing(
         self, user_input: str
     ) -> Tuple[Optional[str], Dict[str, Any]]:
-        """
-        자주 사용되는 패턴은 LLM을 거치지 않고 빠르게 처리
-        """
-
         text = user_input.lower()
 
         analysis_patterns = {
